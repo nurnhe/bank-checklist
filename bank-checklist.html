@@ -61,7 +61,7 @@ nav.tabs button { padding: 0 14px; font-size: 14px; font-weight: 500 }
   .logo svg { width: 24px; height: 24px }
   .brand .eyebrow { font-size: 10.5px }
   .wrap { padding-block: 14px calc(104px + env(safe-area-inset-bottom, 0px)); gap: 16px }
-  .bottom-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; position: fixed; z-index: 15;
+  .bottom-nav { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; position: fixed; z-index: 15;
     left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px));
     padding: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow-lg) }
   .bottom-nav button { border: 0; background: none; display: grid; justify-items: center; gap: 2px; padding: 7px 0 6px; font-size: 11.5px; font-weight: 500; color: var(--muted); border-radius: 14px; -webkit-tap-highlight-color: transparent; transition: background .15s, color .15s }
@@ -153,6 +153,26 @@ details summary { cursor: pointer; font-size: 14px; font-weight: 500; color: var
 .prog { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px; font-variant-numeric: tabular-nums }
 .prog .lab { color: var(--muted); font-size: 12.5px }
 
+/* Bank sections (collapsible) */
+.bank { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden }
+.bank::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--line) }
+.bank.st-applying::before { background: var(--gold) }
+.bank.st-open::before { background: var(--ok) }
+.bank.st-no { opacity: .6 }
+.bank > summary { list-style: none; display: grid; grid-template-columns: minmax(0, 1fr) auto 28px; gap: 4px 10px; align-items: center; padding: 16px 14px 16px 22px; cursor: pointer; -webkit-tap-highlight-color: transparent }
+.bank > summary::-webkit-details-marker { display: none }
+.bank > summary:hover { background: var(--surface-2) }
+.bank .meta { grid-column: 1 / -1; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums }
+.bank .chev { width: 22px; height: 22px; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; grid-row: 1; grid-column: 3 }
+.bank[open] .chev { transform: rotate(180deg) }
+.bank-body { padding: 4px 16px 18px 22px; display: grid; gap: 4px }
+.bank-body .part { display: grid; gap: 8px; padding-block: 14px 4px; border-top: 1px solid var(--line) }
+.bank-body .part:first-child { border-top: 0; padding-top: 0 }
+.bank-body .part-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap }
+.bank-body .eyebrow { letter-spacing: .06em }
+.banks-list { display: grid; gap: 10px }
+.list-head { display: flex; align-items: end; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 6px 4px 0 }
+
 /* Documents */
 .picks { display: grid; gap: 5px; padding-top: 6px }
 .pick { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); cursor: pointer; transition: background .15s; overflow-wrap: anywhere; color: var(--ink); font-weight: 400; font-size: 14.5px }
@@ -194,8 +214,7 @@ details summary { cursor: pointer; font-size: 14px; font-weight: 500; color: var
         <button data-act="theme" data-theme="dark" data-t-label="dark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
       </div>
       <nav class="tabs seg" role="tablist">
-        <button role="tab" data-act="tab" data-tab="steps" data-t="tabSteps"></button>
-        <button role="tab" data-act="tab" data-tab="banks" data-t="tabBanks"></button>
+        <button role="tab" data-act="tab" data-tab="list" data-t="tabList"></button>
         <button role="tab" data-act="tab" data-tab="docs" data-t="tabDocs"></button>
       </nav>
     </div>
@@ -204,8 +223,7 @@ details summary { cursor: pointer; font-size: 14px; font-weight: 500; color: var
   <p class="status" id="status"></p>
 </div>
 <nav class="bottom-nav">
-  <button data-act="tab" data-tab="steps"><svg viewBox="0 0 24 24" aria-hidden="true" data-nav="steps"></svg><span data-t="tabSteps"></span></button>
-  <button data-act="tab" data-tab="banks"><svg viewBox="0 0 24 24" aria-hidden="true" data-nav="banks"></svg><span data-t="tabBanks"></span></button>
+  <button data-act="tab" data-tab="list"><svg viewBox="0 0 24 24" aria-hidden="true" data-nav="steps"></svg><span data-t="tabList"></span></button>
   <button data-act="tab" data-tab="docs"><svg viewBox="0 0 24 24" aria-hidden="true" data-nav="docs"></svg><span data-t="tabDocs"></span></button>
 </nav>
 <div id="sheetRoot"></div>
@@ -227,16 +245,16 @@ const CROSS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6l-12 12
 const T = {
   ru: {
     eyebrow: "Бизнес-счёт в Сербии", title: "Открытие <em>счёта</em>", language: "Язык", theme: "Тема", auto: "Как на устройстве", light: "Светлая", dark: "Тёмная",
-    tabSteps: "Шаги", tabBanks: "Банки", tabDocs: "Документы",
+    tabList: "Чек-лист", tabDocs: "Документы", bankSettings: "Название и удаление",
     progress: "Общий прогресс", genSteps: "Общие шаги", docsReady: "Документы готовы", banks: "Банки",
     everyBank: "Для любого банка", generalSteps: "Общие шаги",
-    generalHint: "Шаги, которые нужны в любом банке. Шаги конкретного банка — во вкладке «Банки».",
+    generalHint: "Шаги, которые нужны в любом банке. Ниже — отдельно по каждому банку.",
     noGeneral: "Общих шагов пока нет. Добавьте первый ниже.", addGeneral: "Добавить общий шаг", add: "Добавить", allDone: "Всё готово",
     backupEyebrow: "Резервная копия", backupTitle: "Сохраните копию",
     backupHint: "Чек-лист хранится на этом устройстве. Сохраните файл, чтобы не потерять данные или перенести их на новый телефон.",
     saveBackup: "Сохранить файл", restore: "Восстановить из файла",
     compare: "Сравнение", banksTitle: "Банки",
-    banksHint: "Добавьте банки, которые рассматриваете. Откройте банк, чтобы отметить нужные документы и добавить его собственные шаги.",
+    banksHint: "Нажмите на банк, чтобы раскрыть его документы и шаги.",
     bankName: "Название банка", addBank: "Добавить банк", noBanks: "Банков пока нет", noBanksHint: "Введите название банка выше и нажмите «Добавить банк».",
     progDocs: "Документы", progSteps: "Шаги банка",
     st_considering: "Рассматриваю", st_applying: "Подаю заявку", st_open: "Счёт открыт", st_no: "Не подходит",
@@ -254,7 +272,7 @@ const T = {
     askedBy: "Какие банки просят", moveUp: "Выше", moveDown: "Ниже", save: "Сохранить", cancel: "Отмена", del: "Удалить", confirmDelete: "Нажмите ещё раз, чтобы удалить",
     removedDoc: (d, b) => `«${d}» убран из банка ${b}. Он остаётся в списке документов.`, deleted: x => `Удалено: ${x}.`,
     needName: "У банка должно быть название.", saved: "Сохранено.", dupBank: x => `${x} уже в списке.`,
-    addedBank: x => `${x} добавлен. Нажмите на него, чтобы выбрать нужные документы.`,
+    addedBank: x => `${x} добавлен. Отметьте, какие документы он просит.`,
     backupSaved: "Резервная копия сохранена.", backupFail: "Не удалось сохранить копию. Попробуйте ещё раз чуть позже.",
     restored: "Чек-лист восстановлен из файла.", badFile: "Это не файл резервной копии. Выберите файл, сохранённый через «Сохранить файл».",
     saveFail: "Не удалось сохранить изменение. Проверьте подключение и попробуйте снова.",
@@ -263,16 +281,16 @@ const T = {
   },
   sr: {
     eyebrow: "Poslovni račun u Srbiji", title: "Otvaranje <em>računa</em>", language: "Jezik", theme: "Tema", auto: "Kao na uređaju", light: "Svetla", dark: "Tamna",
-    tabSteps: "Koraci", tabBanks: "Banke", tabDocs: "Dokumenta",
+    tabList: "Lista", tabDocs: "Dokumenta", bankSettings: "Naziv i brisanje",
     progress: "Ukupan napredak", genSteps: "Opšti koraci", docsReady: "Spremna dokumenta", banks: "Banke",
     everyBank: "Za svaku banku", generalSteps: "Opšti koraci",
-    generalHint: "Koraci koji važe za svaku banku. Koraci za pojedinačnu banku su na kartici „Banke“.",
+    generalHint: "Koraci koji važe za svaku banku. Ispod su koraci za svaku banku posebno.",
     noGeneral: "Još nema opštih koraka. Dodajte prvi ispod.", addGeneral: "Dodaj opšti korak", add: "Dodaj", allDone: "Sve gotovo",
     backupEyebrow: "Rezervna kopija", backupTitle: "Sačuvajte kopiju",
     backupHint: "Lista je sačuvana na ovom uređaju. Sačuvajte fajl da ne izgubite podatke ili da ih prenesete na novi telefon.",
     saveBackup: "Sačuvaj fajl", restore: "Vrati iz fajla",
     compare: "Poređenje", banksTitle: "Banke",
-    banksHint: "Dodajte banke koje razmatrate. Otvorite banku da označite dokumenta koja traži i dodate njene korake.",
+    banksHint: "Dodirnite banku da otvorite njena dokumenta i korake.",
     bankName: "Naziv banke", addBank: "Dodaj banku", noBanks: "Još nema banaka", noBanksHint: "Upišite naziv banke iznad i dodirnite „Dodaj banku“.",
     progDocs: "Dokumenta", progSteps: "Koraci banke",
     st_considering: "Razmatram", st_applying: "Podnosim zahtev", st_open: "Račun otvoren", st_no: "Ne odgovara",
@@ -290,7 +308,7 @@ const T = {
     askedBy: "Koje banke traže", moveUp: "Gore", moveDown: "Dole", save: "Sačuvaj", cancel: "Otkaži", del: "Obriši", confirmDelete: "Dodirnite ponovo da obrišete",
     removedDoc: (d, b) => `„${d}“ je uklonjen iz banke ${b}. Ostaje na listi dokumenata.`, deleted: x => `Obrisano: ${x}.`,
     needName: "Banka mora imati naziv.", saved: "Sačuvano.", dupBank: x => `${x} je već na listi.`,
-    addedBank: x => `Dodato: ${x}. Dodirnite banku da izaberete dokumenta koja traži.`,
+    addedBank: x => `Dodato: ${x}. Označite koja dokumenta traži.`,
     backupSaved: "Rezervna kopija je sačuvana.", backupFail: "Kopija nije sačuvana. Pokušajte ponovo malo kasnije.",
     restored: "Lista je vraćena iz fajla.", badFile: "Ovo nije fajl rezervne kopije. Izaberite fajl sačuvan preko „Sačuvaj fajl“.",
     saveFail: "Izmena nije sačuvana. Proverite vezu i pokušajte ponovo.",
@@ -318,7 +336,6 @@ const STARTER = {
   d_res: { ru: ["Вид на жительство", "Только если директор или владелец — иностранец."], sr: ["Dozvola boravka", "Samo ako je direktor ili vlasnik strani državljanin."] },
   d_stamp: { ru: ["Печать компании", "Только если вы её используете."], sr: ["Pečat firme", "Samo ako ga koristite."] }
 };
-const GENERAL_KEYS = ["s_compare", "s_signer", "s_stamp", "s_book", "s_sign", "s_ebank", "s_acct"];
 const DOC_KEYS = ["d_apr", "d_pib", "d_osn", "d_id", "d_ben", "d_res", "d_stamp"];
 /* The first version started in English; these map its untouched starter items onto the new ones. null = dropped (company registration). */
 const OLD_EN = {
@@ -348,21 +365,21 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 
 function starter() {
   return {
-    v: 2,
-    general: GENERAL_KEYS.map(key => ({ id: uid(), key, done: false })),
+    v: 3,
+    general: [],
     docs: DOC_KEYS.map(key => ({ id: uid(), key, ready: false })),
     banks: []
   };
 }
 
 let S = null, db = null, mode = "local";
-const ui = { tab: "steps", sheet: null, armed: null, focus: null, pickOpen: false };
+const ui = { tab: "list", sheet: null, armed: null, focus: null, pickOpen: "", open: new Set() };
 
 /* ---------- storage ---------- */
 function normalise(d) {
   d = d && typeof d === "object" ? d : {};
-  const out = { v: 2, general: Array.isArray(d.general) ? d.general : [], docs: Array.isArray(d.docs) ? d.docs : [], banks: Array.isArray(d.banks) ? d.banks : [] };
-  if (d.v !== 2) {
+  const out = { v: 3, general: Array.isArray(d.general) ? d.general : [], docs: Array.isArray(d.docs) ? d.docs : [], banks: Array.isArray(d.banks) ? d.banks : [] };
+  if (d.v !== 2 && d.v !== 3) {
     /* Version 1: docs used "name", and starter items were English text. Untouched starter items become translatable;
        the company-registration steps are dropped unless they were ticked or given a note. */
     const fix = (x, txt) => {
@@ -374,6 +391,8 @@ function normalise(d) {
     out.general = out.general.map(x => fix({ ...x }, x.text)).filter(Boolean);
     out.docs = out.docs.map(x => fix({ ...x }, x.name ?? x.text)).filter(Boolean);
   }
+  /* Version 3 (KK, 2026-11-02): the starting general steps are removed; only steps KK wrote or edited stay. */
+  if (d.v !== 3) out.general = out.general.filter(x => !x.key);
   out.banks.forEach(b => { b.docIds ||= []; b.steps ||= []; b.status ||= "considering"; b.note ||= "" });
   return out;
 }
@@ -434,46 +453,49 @@ function prog(lab, done, total) {
   return `<div class="prog"><span class="lab">${lab}</span><div class="bar"><span style="width:${pct}%"></span></div><span>${done}/${total}</span></div>`;
 }
 
-function viewSteps() {
-  const g = S.general, gd = count(g, x => x.done), ready = count(S.docs, d => d.ready);
-  const all = [...g.map(x => x.done), ...S.docs.map(d => d.ready)], pct = all.length ? Math.round(count(all, Boolean) / all.length * 100) : 0;
-  return `<section class="overview">
-      <div class="ov main"><span class="eyebrow">${t("progress")}</span><b>${pct}<small>%</small></b>
-        <div class="segbar" aria-hidden="true">${all.map(on => `<i class="${on ? "on" : ""}"></i>`).join("")}</div></div>
-      <div class="ov"><span class="eyebrow">${t("genSteps")}</span><b>${gd}<small>/${g.length}</small></b></div>
-      <div class="ov"><span class="eyebrow">${t("docsReady")}</span><b>${ready}<small>/${S.docs.length}</small></b></div>
-    </section>
-    <section class="card">
+const CHEV = '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6l6 -6"/></svg>';
+function viewList() {
+  const g = S.general, gd = count(g, x => x.done);
+  return `<section class="card">
       <div class="sec-head"><div><span class="eyebrow">${t("everyBank")}</span><h2>${t("generalSteps")}</h2></div>
-        ${g.length && gd === g.length ? `<span class="done-badge">✓ ${t("allDone")}</span>` : ""}</div>
+        ${g.length && gd === g.length ? `<span class="done-badge">✓ ${t("allDone")}</span>` : g.length ? `<span class="pill">${t("doneOf", gd, g.length)}</span>` : ""}</div>
       <p class="hint">${t("generalHint")}</p>
       ${g.length ? `<ol class="steps">${g.map(x => stepRow(x, "general")).join("")}</ol>` : `<p class="hint">${t("noGeneral")}</p>`}
       ${addForm("general", t("addGeneral"), t("add"))}
     </section>
-    <section class="card">
-      <div class="sec-head"><div><span class="eyebrow">${t("backupEyebrow")}</span><h3>${t("backupTitle")}</h3></div></div>
-      <p class="hint">${t("backupHint")}</p>
-      <div class="btns"><button class="btn small" data-act="backup">${t("saveBackup")}</button>
-        <label class="btn small">${t("restore")}<input type="file" accept=".json,application/json" data-act="restore" hidden></label></div>
-    </section>`;
+    <div class="list-head"><div><span class="eyebrow">${t("compare")}</span><h2>${t("banksTitle")}</h2></div></div>
+    ${S.banks.length ? `<p class="hint" style="padding-inline:4px">${t("banksHint")}</p><div class="banks-list">${S.banks.map(bankPanel).join("")}</div>`
+      : `<div class="empty-state"><h3>${t("noBanks")}</h3><p class="muted">${t("noBanksHint")}</p></div>`}
+    ${addForm("bank", t("bankName"), t("addBank"))}`;
 }
-
-function viewBanks() {
-  const cards = S.banks.map(b => {
-    const docs = bankDocs(b), st = b.status || "considering";
-    return `<button class="bank-card st-${st}" data-act="open-bank" data-id="${b.id}">
-      <div class="head"><h3>${esc(b.name)}</h3><span class="pill ${st}">${t("st_" + st)}</span></div>
-      ${prog(t("progDocs"), count(docs, d => d.ready), docs.length)}
-      ${prog(t("progSteps"), count(b.steps, x => x.done), b.steps.length)}
-      ${b.note ? `<p class="note">${esc(b.note)}</p>` : ""}
-    </button>`;
-  }).join("");
-  return `<section class="card">
-    <div class="sec-head"><div><span class="eyebrow">${t("compare")}</span><h2>${t("banksTitle")}</h2></div></div>
-    <p class="hint">${t("banksHint")}</p>
-    ${addForm("bank", t("bankName"), t("addBank"))}
-    ${S.banks.length ? `<div class="bank-grid">${cards}</div>` : `<div class="empty-state"><h3>${t("noBanks")}</h3><p class="muted">${t("noBanksHint")}</p></div>`}
-  </section>`;
+function bankPanel(b) {
+  const docs = bankDocs(b), st = b.status || "considering";
+  const other = S.docs.filter(d => !b.docIds.includes(d.id));
+  return `<details class="bank st-${st}" data-bank="${b.id}" ${ui.open.has(b.id) ? "open" : ""}>
+    <summary><h3 data-bank-name="${b.id}">${esc(b.name)}</h3><span class="pill ${st}">${t("st_" + st)}</span>${CHEV}
+      <span class="meta">${t("progDocs")} ${count(docs, d => d.ready)}/${docs.length} · ${t("progSteps")} ${count(b.steps, x => x.done)}/${b.steps.length}</span></summary>
+    <div class="bank-body">
+      <div class="part"><span class="eyebrow">${t("status")}</span><div class="choice">${["considering", "applying", "open", "no"].map(k => `<button data-act="status" data-id="${b.id}" data-status="${k}" aria-pressed="${st === k}">${t("st_" + k)}</button>`).join("")}</div></div>
+      <div class="part">
+        <div class="part-head"><span class="eyebrow">${t("docsAsked")}</span><span class="pill">${t("readyOf", count(docs, d => d.ready), docs.length)}</span></div>
+        ${docs.length ? `<ul class="steps plain">${docs.map(d => docRow(d, b.id)).join("")}</ul>` : `<p class="hint">${t("noneChosen")}</p>`}
+        ${other.length ? `<details ${docs.length && ui.pickOpen !== b.id ? "" : "open"}><summary>${t("chooseDocs", other.length)}</summary><div class="picks">${other.map(d =>
+          `<label class="pick"><input type="checkbox" data-act="link-doc" data-id="${d.id}" data-bank="${b.id}"><span>${esc(label(d))}</span></label>`).join("")}</div></details>` : ""}
+        ${addForm("bank-doc", t("addNewDoc"), t("add"), b.id)}
+      </div>
+      <div class="part">
+        <div class="part-head"><span class="eyebrow">${t("stepsHere")}</span><span class="pill">${t("doneOf", count(b.steps, x => x.done), b.steps.length)}</span></div>
+        ${b.steps.length ? `<ol class="steps">${b.steps.map(x => stepRow(x, "bstep", b.id)).join("")}</ol>` : `<p class="hint">${t("bankStepsHint")}</p>`}
+        ${addForm("bstep", t("addBankStep"), t("add"), b.id)}
+      </div>
+      <div class="part"><label class="field">${t("notes")}<textarea class="input" data-field="note" data-id="${b.id}" placeholder="${esc(t("bankNotesPh"))}">${esc(b.note)}</textarea></label></div>
+      <details class="part" ${ui.armed === b.id ? "open" : ""}><summary>${t("bankSettings")}</summary>
+        <div style="display:grid;gap:10px;padding-top:8px">
+          <label class="field">${t("name")}<input class="input" data-field="name" data-id="${b.id}" value="${esc(b.name)}" autocomplete="off"></label>
+          <div class="btns"><button class="btn danger${ui.armed === b.id ? " armed" : ""}" data-act="delete-bank" data-id="${b.id}">${ui.armed === b.id ? t("confirmDeleteBank") : t("deleteBank")}</button></div>
+        </div></details>
+    </div>
+  </details>`;
 }
 
 function viewDocs() {
@@ -483,34 +505,13 @@ function viewDocs() {
     <p class="hint">${t("docsHint")}</p>
     ${S.docs.length ? `<ul class="steps plain">${S.docs.map(d => docRow(d)).join("")}</ul>` : `<p class="hint">${t("noDocs")}</p>`}
     ${addForm("doc", t("addDoc"), t("add"))}
+  </section>
+  <section class="card">
+    <div class="sec-head"><div><span class="eyebrow">${t("backupEyebrow")}</span><h3>${t("backupTitle")}</h3></div></div>
+    <p class="hint">${t("backupHint")}</p>
+    <div class="btns"><button class="btn small" data-act="backup">${t("saveBackup")}</button>
+      <label class="btn small">${t("restore")}<input type="file" accept=".json,application/json" data-act="restore" hidden></label></div>
   </section>`;
-}
-
-function sheetBank(b) {
-  const docs = bankDocs(b), st = b.status || "considering", gd = count(S.general, x => x.done);
-  const other = S.docs.filter(d => !b.docIds.includes(d.id));
-  return `<div class="sheet-head"><div><span class="eyebrow">${t("bank")}</span><h2>${esc(b.name)}</h2></div><button class="btn ghost" data-act="close" aria-label="${t("close")}">✕</button></div>
-  <div class="sheet-body">
-    <section class="card">
-      <label class="field">${t("name")}<input class="input" data-field="name" data-id="${b.id}" value="${esc(b.name)}" autocomplete="off"></label>
-      <div class="field">${t("status")}<div class="choice">${["considering", "applying", "open", "no"].map(k => `<button data-act="status" data-id="${b.id}" data-status="${k}" aria-pressed="${st === k}">${t("st_" + k)}</button>`).join("")}</div></div>
-      <label class="field">${t("notes")}<textarea class="input" data-field="note" data-id="${b.id}" placeholder="${esc(t("bankNotesPh"))}">${esc(b.note)}</textarea></label>
-    </section>
-    <section class="card">
-      <div class="sec-head"><h3>${t("docsAsked")}</h3><span class="pill">${t("readyOf", count(docs, d => d.ready), docs.length)}</span></div>
-      ${docs.length ? `<ul class="steps plain">${docs.map(d => docRow(d, b.id)).join("")}</ul>` : `<p class="hint">${t("noneChosen")}</p>`}
-      ${other.length ? `<details ${docs.length && !ui.pickOpen ? "" : "open"}><summary>${t("chooseDocs", other.length)}</summary><div class="picks">${other.map(d =>
-        `<label class="pick"><input type="checkbox" data-act="link-doc" data-id="${d.id}" data-bank="${b.id}"><span>${esc(label(d))}</span></label>`).join("")}</div></details>` : ""}
-      ${addForm("bank-doc", t("addNewDoc"), t("add"), b.id)}
-    </section>
-    <section class="card">
-      <div class="sec-head"><h3>${t("stepsHere")}</h3><span class="pill">${t("doneOf", count(b.steps, x => x.done), b.steps.length)}</span></div>
-      ${b.steps.length ? `<ol class="steps">${b.steps.map(x => stepRow(x, "bstep", b.id)).join("")}</ol>` : `<p class="hint">${t("bankStepsHint")}</p>`}
-      ${addForm("bstep", t("addBankStep"), t("add"), b.id)}
-    </section>
-    <p class="hint">${t("plusGeneral", gd, S.general.length)}</p>
-    <div class="btns"><button class="btn danger${ui.armed === b.id ? " armed" : ""}" data-act="delete-bank" data-id="${b.id}">${ui.armed === b.id ? t("confirmDeleteBank") : t("deleteBank")}</button></div>
-  </div>`;
 }
 
 function sheetItem({ kind, id, bank }) {
@@ -545,14 +546,13 @@ function renderChrome() {
 }
 function render() {
   renderChrome();
-  document.getElementById("main").innerHTML = !S ? "" : ui.tab === "banks" ? viewBanks() : ui.tab === "docs" ? viewDocs() : viewSteps();
+  document.getElementById("main").innerHTML = !S ? "" : ui.tab === "docs" ? viewDocs() : viewList();
   renderSheet();
   if (ui.focus) { document.getElementById(ui.focus)?.focus(); ui.focus = null }
 }
 function renderSheet() {
   const root = document.getElementById("sheetRoot"), s = ui.sheet;
   let html = "";
-  if (S && s?.type === "bank") { const b = bankOf(s.id); html = b ? sheetBank(b) : "" }
   if (S && s?.type === "item") html = sheetItem(s);
   if (!html) { if (s) ui.sheet = null; root.innerHTML = ""; document.body.style.overflow = ""; return }
   const body = root.querySelector(".sheet-body"), top = body && root.dataset.key === JSON.stringify(s) ? body.scrollTop : 0;
@@ -561,7 +561,7 @@ function renderSheet() {
   root.querySelector(".sheet-body").scrollTop = top;
   document.body.style.overflow = "hidden";
 }
-function openSheet(s) { ui.sheet = s; ui.armed = null; ui.pickOpen = false; document.getElementById("sheetRoot").dataset.key = ""; renderSheet() }
+function openSheet(s) { ui.sheet = s; ui.armed = null; document.getElementById("sheetRoot").dataset.key = ""; renderSheet() }
 function closeSheet() { ui.armed = null; ui.sheet = ui.sheet?.back || null; document.getElementById("sheetRoot").dataset.key = ""; render() }
 
 /* ---------- actions ---------- */
@@ -573,13 +573,12 @@ document.addEventListener("click", e => {
   else if (act === "lang") { lang = el.dataset.lang; try { localStorage.setItem(LANG_KEY, lang) } catch (e) {} render() }
   else if (act === "theme") setTheme(el.dataset.theme);
   else if (act === "close") closeSheet();
-  else if (act === "open-bank") openSheet({ type: "bank", id });
-  else if (act === "edit") openSheet({ type: "item", kind: el.dataset.kind, id, bank: el.dataset.bank, back: ui.sheet?.type === "bank" ? ui.sheet : null });
+  else if (act === "edit") openSheet({ type: "item", kind: el.dataset.kind, id, bank: el.dataset.bank });
   else if (act === "status") { bankOf(id).status = el.dataset.status; save() }
   else if (act === "unlink-doc") { const b = bankOf(el.dataset.bank); b.docIds = b.docIds.filter(x => x !== id); save(); toast(t("removedDoc", label(docOf(id) || {}), b.name)) }
   else if (act === "delete-bank") {
-    if (ui.armed !== id) { ui.armed = id; renderSheet(); return }
-    const b = bankOf(id); S.banks = S.banks.filter(x => x.id !== id); ui.armed = null; ui.sheet = null; save(); toast(t("deleted", b.name));
+    if (ui.armed !== id) { ui.armed = id; render(); return }
+    const b = bankOf(id); S.banks = S.banks.filter(x => x.id !== id); ui.open.delete(id); ui.armed = null; save(); toast(t("deleted", b.name));
   }
   else if (act === "move") {
     const s = ui.sheet, list = listFor(s.kind, s.bank), i = list.findIndex(x => x.id === s.id), j = i + Number(el.dataset.dir);
@@ -603,14 +602,14 @@ document.addEventListener("change", e => {
     if (el.dataset.kind === "doc") x.ready = el.checked; else x.done = el.checked;
     save();
   } else if (act === "link-doc") {
-    const b = bankOf(el.dataset.bank); if (el.checked && !b.docIds.includes(id)) b.docIds.push(id); ui.pickOpen = true; save();
+    const b = bankOf(el.dataset.bank); if (el.checked && !b.docIds.includes(id)) b.docIds.push(id); ui.pickOpen = b.id; save();
   } else if (act === "restore") restore(el.files[0]);
   else if (el.dataset.field) {
     const b = bankOf(id), v = el.value.trim();
     if (el.dataset.field === "name") { if (!v) { el.value = b.name; toast(t("needName")); return } b.name = v } else b.note = v;
     /* Don't redraw the sheet here: this fires on blur, and redrawing would swallow the tap that caused it. */
-    persist(); document.getElementById("main").innerHTML = viewBanks();
-    const h = document.querySelector(".sheet-head h2"); if (h) h.textContent = b.name;
+    persist();
+    const h = document.querySelector(`[data-bank-name="${b.id}"]`); if (h) h.textContent = b.name;
   }
 });
 document.addEventListener("submit", e => {
@@ -637,7 +636,8 @@ document.addEventListener("submit", e => {
     if (!bank.docIds.includes(d.id)) bank.docIds.push(d.id);
   } else if (form === "bank") {
     if (S.banks.some(b => b.name.toLowerCase() === text.toLowerCase())) { toast(t("dupBank", text)); return }
-    S.banks.push({ id: uid(), name: text, status: "considering", note: "", docIds: [], steps: [] });
+    const nb = { id: uid(), name: text, status: "considering", note: "", docIds: [], steps: [] };
+    S.banks.push(nb); ui.open.add(nb.id); ui.pickOpen = nb.id;
     toast(t("addedBank", text));
   }
   ui.focus = "add-" + form; save();
@@ -683,6 +683,8 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => ap
 
 /* ---------- boot ---------- */
 document.querySelectorAll("[data-nav]").forEach(svg => svg.innerHTML = NAV_ICONS[svg.dataset.nav]);
+/* Remember which banks are open so redrawing the list keeps them open. */
+document.addEventListener("toggle", e => { const id = e.target.dataset?.bank; if (id && e.target.classList.contains("bank")) e.target.open ? ui.open.add(id) : ui.open.delete(id) }, true);
 addEventListener("keydown", e => { if (e.key === "Escape" && ui.sheet) closeSheet() });
 render();
 (async () => {
@@ -696,7 +698,7 @@ render();
     const d = s.data(), next = normalise(d);
     if (S && JSON.stringify(next) === JSON.stringify(S)) return;
     S = next; render();
-    if (d.v !== 2) persist();
+    if (d.v !== 3) persist();
   }, () => { clearTimeout(slow); setStatus("stLost") });
   setStatus("stDb");
 })();
