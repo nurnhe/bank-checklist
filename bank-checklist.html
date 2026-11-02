@@ -92,6 +92,23 @@ header.top { display: flex; flex-wrap: wrap; align-items: center; justify-conten
 .step input::after { content: ""; width: 10px; height: 6px; border: solid var(--surface); border-width: 0 0 2.2px 2.2px; transform: translateY(-1px) rotate(-45deg); opacity: 0 }
 .step input:checked { background: var(--ok); border-color: var(--ok) }
 .step input:checked::after { opacity: 1 }
+.step.auto { cursor: default }
+.step.auto input { cursor: default }
+.step.auto input:not(:checked) { border-style: dashed }
+.substeps { grid-column: 1 / -1; display: grid; gap: 0; margin: -6px 0 6px 44px; padding-left: 12px; border-left: 2px solid var(--line) }
+.subrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center }
+.step.small { grid-template-columns: 20px minmax(0, 1fr); gap: 10px; min-height: 38px; padding: 5px 6px; font-size: 14px }
+.step.small .nm { font-weight: 400 }
+.step.small input { width: 20px; height: 20px; border-radius: 6px }
+.step.small input::after { width: 8px; height: 5px }
+.edit-btn.small { width: 34px; height: 34px }
+.edit-btn.small svg { width: 16px; height: 16px }
+.sub-add > summary { font-size: 13px; color: var(--muted); padding: 6px 6px; list-style: none }
+.sub-add > summary::-webkit-details-marker { display: none }
+.sub-add > summary:hover { color: var(--accent) }
+.sub-add .add-row { padding: 2px 0 8px }
+.sub-add .input { padding: 8px 10px; font-size: 14px }
+.sub-add .btn { min-height: 38px }
 .step .txt { overflow-wrap: anywhere; min-width: 0 }
 .step .nm { display: block; font-weight: 500 }
 .step .sub { display: block; font-size: 13px; color: var(--muted); white-space: pre-line }
@@ -226,7 +243,7 @@ const CROSS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6l-12 12
 const T = {
   ru: {
     eyebrow: "Бизнес-счёт в Сербии", title: "Открытие <em>счёта</em>", language: "Язык", theme: "Тема", auto: "Как на устройстве", light: "Светлая", dark: "Тёмная",
-    partSteps: "Шаги", partDocs: "Документы", noBankDocs: "Добавьте документы, которые просит этот банк.", bankDocsTitle: "Документы этого банка", bankSettings: "Название и удаление",
+    partSteps: "Шаги", partDocs: "Документы", addSub: "шаг для документа", subPh: "Например: подала захтев", autoReady: "Отмечается сам, когда все шаги документа выполнены", noBankDocs: "Добавьте документы, которые просит этот банк.", bankDocsTitle: "Документы этого банка", bankSettings: "Название и удаление",
     progress: "Общий прогресс", genSteps: "Общие шаги", docsReady: "Документы готовы", banks: "Банки",
     everyBank: "Для любого банка", generalSteps: "Общие шаги",
     generalHint: "Шаги и документы, которые нужны в любом банке. Ниже — отдельно по каждому банку.",
@@ -262,7 +279,7 @@ const T = {
   },
   sr: {
     eyebrow: "Poslovni račun u Srbiji", title: "Otvaranje <em>računa</em>", language: "Jezik", theme: "Tema", auto: "Kao na uređaju", light: "Svetla", dark: "Tamna",
-    partSteps: "Koraci", partDocs: "Dokumenta", noBankDocs: "Dodajte dokumenta koja traži ova banka.", bankDocsTitle: "Dokumenta za ovu banku", bankSettings: "Naziv i brisanje",
+    partSteps: "Koraci", partDocs: "Dokumenta", addSub: "korak za dokument", subPh: "Na primer: podnela zahtev", autoReady: "Označava se samo kada su svi koraci dokumenta urađeni", noBankDocs: "Dodajte dokumenta koja traži ova banka.", bankDocsTitle: "Dokumenta za ovu banku", bankSettings: "Naziv i brisanje",
     progress: "Ukupan napredak", genSteps: "Opšti koraci", docsReady: "Spremna dokumenta", banks: "Banke",
     everyBank: "Za svaku banku", generalSteps: "Opšti koraci",
     generalHint: "Koraci i dokumenta koji važe za svaku banku. Ispod su posebno za svaku banku.",
@@ -315,9 +332,14 @@ const STARTER = {
   d_id: { ru: ["Паспорт или ID-карта директора"], sr: ["Lična karta ili pasoš direktora"] },
   d_ben: { ru: ["Выписка о бенефициарах", "Из Centralna evidencija stvarnih vlasnika."], sr: ["Izvod iz evidencije stvarnih vlasnika", "Centralna evidencija stvarnih vlasnika."] },
   d_res: { ru: ["Вид на жительство", "Только если директор или владелец — иностранец."], sr: ["Dozvola boravka", "Samo ako je direktor ili vlasnik strani državljanin."] },
-  d_stamp: { ru: ["Печать компании", "Только если вы её используете."], sr: ["Pečat firme", "Samo ako ga koristite."] }
+  d_stamp: { ru: ["Печать компании", "Только если вы её используете."], sr: ["Pečat firme", "Samo ako ga koristite."] },
+  d_mup: { ru: ["Уверенье о боравку из МУП", "Uverenje o boravku iz MUP-a."], sr: ["Uverenje o boravku iz MUP-a"] },
+  sub_apply: { ru: ["Подать захтев"], sr: ["Podneti zahtev"] },
+  sub_get: { ru: ["Получить документ"], sr: ["Preuzeti dokument"] }
 };
-const DOC_KEYS = ["d_apr", "d_pib", "d_osn", "d_id", "d_ben", "d_res", "d_stamp"];
+/* KK (2026-11-02): keep only the APR extract and the MUP residence certificate; each starts with "apply" and "receive" steps. */
+const DOC_KEYS = ["d_apr", "d_mup"];
+const starterDoc = key => ({ id: uid(), key, ready: false, steps: ["sub_apply", "sub_get"].map(k => ({ id: uid(), key: k, done: false })) });
 /* The first version started in English; these map its untouched starter items onto the new ones. null = dropped (company registration). */
 const OLD_EN = {
   "Register the company with APR": [null, "Agencija za privredne registre. You get the registration decision (rešenje o registraciji)."],
@@ -346,21 +368,22 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 
 function starter() {
   return {
-    v: 4,
+    v: 5,
     general: [],
-    docs: DOC_KEYS.map(key => ({ id: uid(), key, ready: false })),
+    docs: DOC_KEYS.map(starterDoc),
     banks: []
   };
 }
 
 let S = null, db = null, mode = "local";
-const ui = { sheet: null, armed: null, focus: null, open: new Set() };
+const ui = { sheet: null, armed: null, focus: null, open: new Set(), subOpen: "" };
 
 /* ---------- storage ---------- */
 function normalise(d) {
   d = d && typeof d === "object" ? d : {};
-  const out = { v: 4, general: Array.isArray(d.general) ? d.general : [], docs: Array.isArray(d.docs) ? d.docs : [], banks: Array.isArray(d.banks) ? d.banks : [] };
-  if (d.v !== 2 && d.v !== 3) {
+  const out = { v: 5, general: Array.isArray(d.general) ? d.general : [], docs: Array.isArray(d.docs) ? d.docs : [], banks: Array.isArray(d.banks) ? d.banks : [] };
+  const ver = Number(d.v) || 1;
+  if (ver < 2) {
     /* Version 1: docs used "name", and starter items were English text. Untouched starter items become translatable;
        the company-registration steps are dropped unless they were ticked or given a note. */
     const fix = (x, txt) => {
@@ -373,10 +396,10 @@ function normalise(d) {
     out.docs = out.docs.map(x => fix({ ...x }, x.name ?? x.text)).filter(Boolean);
   }
   /* Version 3 (KK, 2026-11-02): the starting general steps are removed; only steps KK wrote or edited stay. */
-  if (d.v !== 3 && d.v !== 4) out.general = out.general.filter(x => !x.key);
+  if (ver < 3) out.general = out.general.filter(x => !x.key);
   /* Version 4 (KK, 2026-11-02): documents live in two places, general (every bank) and inside each bank.
      A shared document that only some banks asked for moves into those banks; the rest stay general. */
-  if (d.v !== 4) {
+  if (ver < 4) {
     const all = S_banksIds(out.banks);
     out.banks.forEach(b => { b.docs ||= [] });
     out.docs = out.docs.filter(doc => {
@@ -387,7 +410,15 @@ function normalise(d) {
     });
     out.banks.forEach(b => delete b.docIds);
   }
+  /* Version 5: drop the other starting documents, make sure the APR extract and the MUP certificate are there,
+     and give documents their own step lists. */
+  if (ver < 5) {
+    out.docs = out.docs.filter(x => !x.key || x.key === "d_apr");
+    out.docs.forEach(x => { if (x.key === "d_apr" && !x.steps?.length && !x.ready) x.steps = starterDoc("d_apr").steps });
+    for (const k of DOC_KEYS) if (!out.docs.some(x => x.key === k)) out.docs.push(starterDoc(k));
+  }
   out.banks.forEach(b => { b.docs ||= []; b.steps ||= []; b.status ||= "considering"; b.note ||= "" });
+  [...out.docs, ...out.banks.flatMap(b => b.docs)].forEach(x => { x.steps ||= [] });
   return out;
 }
 const S_banksIds = banks => banks.map(b => b.id);
@@ -421,6 +452,8 @@ const bankOf = id => S.banks.find(b => b.id === id);
 const docOf = id => S.docs.find(d => d.id === id);
 function listFor(kind, bankId) { return kind === "general" ? S.general : kind === "doc" ? S.docs : kind === "bdoc" ? bankOf(bankId)?.docs : bankOf(bankId)?.steps }
 const isDocKind = k => k === "doc" || k === "bdoc";
+/* A document with its own steps counts as received once every step is ticked. */
+const docReady = d => d.steps?.length ? d.steps.every(x => x.done) : !!d.ready;
 function itemOf(kind, id, bankId) { return listFor(kind, bankId)?.find(x => x.id === id) }
 const count = (arr, f) => arr.filter(f).length;
 
@@ -432,11 +465,19 @@ function stepRow(x, kind, bankId = "") {
     <button class="edit-btn" data-act="edit" data-kind="${kind}" data-id="${x.id}" data-bank="${bankId}" aria-label="${t("edit")}" title="${t("edit")}">${PENCIL}</button></li>`;
 }
 function docRow(d, bankId = "") {
-  const n = noteOf(d), kind = bankId ? "bdoc" : "doc";
-  return `<li><label class="step"><input type="checkbox" data-act="toggle" data-kind="${kind}" data-id="${d.id}" data-bank="${bankId}" ${d.ready ? "checked" : ""}>
+  const n = noteOf(d), kind = bankId ? "bdoc" : "doc", st = d.steps || [], ready = docReady(d), key = `${kind}|${d.id}|${bankId}`;
+  return `<li class="doc"><label class="step${st.length ? " auto" : ""}"><input type="checkbox" data-act="toggle" data-kind="${kind}" data-id="${d.id}" data-bank="${bankId}" ${ready ? "checked" : ""} ${st.length ? `disabled title="${esc(t("autoReady"))}"` : ""}>
     <span class="txt"><span class="nm">${esc(label(d))}</span>${n ? `<span class="sub">${esc(n)}</span>` : ""}</span></label>
-    <button class="edit-btn" data-act="edit" data-kind="${kind}" data-id="${d.id}" data-bank="${bankId}" aria-label="${t("edit")}" title="${t("edit")}">${PENCIL}</button></li>`;
+    <button class="edit-btn" data-act="edit" data-kind="${kind}" data-id="${d.id}" data-bank="${bankId}" aria-label="${t("edit")}" title="${t("edit")}">${PENCIL}</button>
+    <div class="substeps">
+      ${st.map(x => `<div class="subrow"><label class="step small"><input type="checkbox" data-act="toggle-sub" data-key="${key}" data-id="${x.id}" ${x.done ? "checked" : ""}><span class="txt"><span class="nm">${esc(label(x))}</span></span></label>
+        <button class="edit-btn small" data-act="del-sub" data-key="${key}" data-id="${x.id}" aria-label="${t("del")}" title="${t("del")}">${CROSS}</button></div>`).join("")}
+      <details class="sub-add" ${ui.subOpen === key ? "open" : ""}><summary>+ ${t("addSub")}</summary>
+        <form class="add-row" data-form="sub" data-key="${key}"><input class="input" name="text" placeholder="${esc(t("subPh"))}" aria-label="${esc(t("addSub"))}" autocomplete="off" id="add-sub-${d.id}"><button class="btn primary small">${t("add")}</button></form>
+      </details>
+    </div></li>`;
 }
+const docByKey = key => { const [kind, id, bank] = key.split("|"); return itemOf(kind, id, bank) };
 function addForm(form, placeholder, btn, bankId = "") {
   return `<form class="add-row" data-form="${form}" data-bank="${bankId}"><input class="input" name="text" placeholder="${esc(placeholder)}" aria-label="${esc(placeholder)}" autocomplete="off" id="add-${form}"><button class="btn primary">${btn}</button></form>`;
 }
@@ -447,7 +488,7 @@ function prog(lab, done, total) {
 
 const CHEV = '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6l6 -6"/></svg>';
 function viewList() {
-  const g = S.general, gd = count(g, x => x.done), dr = count(S.docs, d => d.ready);
+  const g = S.general, gd = count(g, x => x.done), dr = count(S.docs, docReady);
   const allDone = g.length + S.docs.length > 0 && gd === g.length && dr === S.docs.length;
   return `<section class="card">
       <div class="sec-head"><h2>${t("everyBank")}</h2>${allDone ? `<span class="done-badge">✓ ${t("allDone")}</span>` : ""}</div>
@@ -479,11 +520,11 @@ function bankPanel(b) {
   const docs = b.docs, st = b.status || "considering";
   return `<details class="bank st-${st}" data-bank="${b.id}" ${ui.open.has(b.id) ? "open" : ""}>
     <summary><h3 data-bank-name="${b.id}">${esc(b.name)}</h3><span class="pill ${st}">${t("st_" + st)}</span>${CHEV}
-      <span class="meta">${t("progDocs")} ${count(docs, d => d.ready)}/${docs.length} · ${t("progSteps")} ${count(b.steps, x => x.done)}/${b.steps.length}</span></summary>
+      <span class="meta">${t("progDocs")} ${count(docs, docReady)}/${docs.length} · ${t("progSteps")} ${count(b.steps, x => x.done)}/${b.steps.length}</span></summary>
     <div class="bank-body">
       <div class="part"><span class="eyebrow">${t("status")}</span><div class="choice">${["considering", "applying", "open", "no"].map(k => `<button data-act="status" data-id="${b.id}" data-status="${k}" aria-pressed="${st === k}">${t("st_" + k)}</button>`).join("")}</div></div>
       <div class="part">
-        <div class="part-head"><span class="eyebrow">${t("bankDocsTitle")}</span><span class="pill">${t("readyOf", count(docs, d => d.ready), docs.length)}</span></div>
+        <div class="part-head"><span class="eyebrow">${t("bankDocsTitle")}</span><span class="pill">${t("readyOf", count(docs, docReady), docs.length)}</span></div>
         ${docs.length ? `<ul class="steps plain">${docs.map(d => docRow(d, b.id)).join("")}</ul>` : `<p class="hint">${t("noBankDocs")}</p>`}
         ${addForm("bank-doc", t("addNewDoc"), t("add"), b.id)}
       </div>
@@ -571,6 +612,7 @@ document.addEventListener("click", e => {
     list.splice(list.indexOf(x), 1);
     ui.armed = null; ui.sheet = s.back || null; save(); toast(t("deleted", label(x)));
   }
+  else if (act === "del-sub") { const d = docByKey(el.dataset.key); if (!d) return; d.steps = d.steps.filter(x => x.id !== id); save() }
   else if (act === "backup") backup();
 });
 document.addEventListener("change", e => {
@@ -579,6 +621,9 @@ document.addEventListener("change", e => {
     const x = itemOf(el.dataset.kind, id, el.dataset.bank); if (!x) return;
     if (isDocKind(el.dataset.kind)) x.ready = el.checked; else x.done = el.checked;
     save();
+  } else if (act === "toggle-sub") {
+    const x = docByKey(el.dataset.key)?.steps.find(x => x.id === id); if (!x) return;
+    x.done = el.checked; save();
   } else if (act === "restore") restore(el.files[0]);
   else if (el.dataset.field) {
     const b = bankOf(id), v = el.value.trim();
@@ -599,11 +644,15 @@ document.addEventListener("submit", e => {
     return;
   }
   const text = f.text.value.trim(); if (!text) return;
+  if (form === "sub") {
+    const d = docByKey(f.dataset.key); if (!d) return;
+    (d.steps ||= []).push({ id: uid(), text, done: false }); ui.subOpen = f.dataset.key; ui.focus = "add-sub-" + d.id; save(); return;
+  }
   const bank = bankOf(f.dataset.bank);
   if (form === "general") S.general.push({ id: uid(), text, note: "", done: false });
-  else if (form === "doc") S.docs.push({ id: uid(), text, note: "", ready: false });
+  else if (form === "doc") S.docs.push({ id: uid(), text, note: "", ready: false, steps: [] });
   else if (form === "bstep") bank.steps.push({ id: uid(), text, note: "", done: false });
-  else if (form === "bank-doc") bank.docs.push({ id: uid(), text, note: "", ready: false }); else if (form === "bank") {
+  else if (form === "bank-doc") bank.docs.push({ id: uid(), text, note: "", ready: false, steps: [] }); else if (form === "bank") {
     if (S.banks.some(b => b.name.toLowerCase() === text.toLowerCase())) { toast(t("dupBank", text)); return }
     const nb = { id: uid(), name: text, status: "considering", note: "", docs: [], steps: [] };
     S.banks.push(nb); ui.open.add(nb.id);
@@ -666,7 +715,7 @@ render();
     const d = s.data(), next = normalise(d);
     if (S && JSON.stringify(next) === JSON.stringify(S)) return;
     S = next; render();
-    if (d.v !== 4) persist();
+    if (d.v !== 5) persist();
   }, () => { clearTimeout(slow); setStatus("stLost") });
   setStatus("stDb");
 })();

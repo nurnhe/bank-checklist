@@ -14,7 +14,8 @@ A small checklist for opening a business bank account: general steps you do once
 
 - **Russian and Serbian:** everything, including the starting list, switches between Russian and Serbian (Latin) with the RU / SR buttons. The choice is saved on the device. Steps and documents you type or edit stay as you wrote them.
 - **One page, no tabs:** a "For every bank" card at the top with general steps and general documents, then one collapsible section per bank. Each bank has its status (Considering, Applying, Account open, Not for me), its own documents, its own steps, notes, and its name and Delete under a fold. The closed header shows the status and document and step counts. Tick, add, edit, reorder or delete anything.
-- **Starting list:** no general steps (you write your own). Seven typical general documents for a Serbian business account (APR extract, PIB, founding act, director's ID, beneficial owners, residence permit, stamp), all editable. No banks until you add them.
+- **Document steps:** every document (general or in a bank) has its own small checklist, for example "Submitted the request", "Received the document". Once all of a document's steps are ticked, the document counts as received; a document without steps is ticked by hand.
+- **Starting list:** no general steps. Two general documents, the APR extract and the residence certificate from MUP (uverenje o boravku), each with "Submit the request" and "Receive the document" steps. Everything can be edited or deleted. No banks until you add them.
 - **Backup:** save a backup file or restore from one at the bottom of the page.
 - **Colour scheme:** Auto, Light or Dark, saved under `nurnhe-theme`, the setting shared with the other apps on nurnhe.github.io.
 - **Look:** its own "ledger" design: warm paper with a dot grid, white cards, cobalt for actions, green for done. Fonts are Unbounded and Onest, which cover Cyrillic and Latin.
