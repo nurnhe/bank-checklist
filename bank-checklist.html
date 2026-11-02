@@ -1,210 +1,212 @@
 <title>Bank Checklist</title>
-<script>/* Apply the saved colour scheme before first paint. "nurnhe-theme" is shared by all of KK's apps on this site. */ try { const t = localStorage.getItem("nurnhe-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t } catch (e) {}</script>
+<script>/* Apply the saved colour scheme and language before first paint. "nurnhe-theme" is shared by all of KK's apps on this site. */ try { const t = localStorage.getItem("nurnhe-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; const l = localStorage.getItem("bank-checklist-lang"); document.documentElement.lang = l === "sr" || l === "ru" ? l : /^(sr|hr|bs)/i.test(navigator.language) ? "sr" : "ru" } catch (e) {}</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600&family=Onest:wght@400;500;600&display=swap">
 <style>
-/* Same look as Skin Diary: soft glows, glass cards, Instrument Serif headings, Outfit body. */
+/* Look: a calm "ledger" — warm paper with a faint dot grid, crisp white cards, cobalt ink for actions, green for done.
+   Unbounded for headings and numbers, Onest for text; both cover Latin and Cyrillic. */
 :root {
-  --bg: #FBF4F7; --bg-2: #F1EAFB; --glow-1: #FFD9E6; --glow-2: #E4DBFF; --glow-3: #E3F6D9;
-  --surface: rgba(255, 255, 255, .72); --surface-solid: #FFFFFF; --ink: #2B1F33; --muted: #8A7B93; --line: rgba(122, 76, 130, .14);
-  --accent: #A23B7C; --accent-ink: #FFFFFF; --accent-soft: #F7E1EE; --lime: #B6D94C;
-  --am-1: #FFE7D1; --am-2: #FFF4C9; --am-ink: #B0631A;
-  --pm-1: #E6E0FF; --pm-2: #D6E2FF; --pm-ink: #5B4BB5;
-  --warn: #B4462A; --warn-soft: #FDE8E0; --ok: #3E8A5C;
-  --shadow: 0 1px 2px rgba(80, 40, 90, .05), 0 10px 30px rgba(120, 60, 130, .09);
-  --shadow-lg: 0 24px 60px rgba(70, 30, 80, .22);
-  --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
-  --sans: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
+  --bg: #F3F0E8; --surface: #FFFFFF; --surface-2: #F8F6F0; --ink: #14202B; --muted: #5F6B76; --line: rgba(20, 32, 43, .12);
+  --accent: #2742C9; --accent-ink: #FFFFFF; --accent-soft: #E2E7FB;
+  --ok: #1F8A5B; --ok-soft: #DDF1E6; --warn: #B4462A; --warn-soft: #FBE6DE; --gold: #B98A1E; --gold-soft: #F6ECD3;
+  --shadow: 0 1px 0 rgba(20, 32, 43, .05), 0 8px 24px rgba(20, 32, 43, .06);
+  --shadow-lg: 0 18px 50px rgba(20, 32, 43, .18);
+  --display: "Unbounded", "Arial Black", system-ui, sans-serif;
+  --sans: "Onest", "Segoe UI", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #17111C; --bg-2: #1C1428; --glow-1: rgba(162, 59, 124, .28); --glow-2: rgba(91, 75, 181, .28); --glow-3: rgba(182, 217, 76, .10);
-  --surface: rgba(38, 28, 46, .72); --surface-solid: #261C2E; --ink: #F3EAF5; --muted: #B3A3BC; --line: rgba(230, 200, 240, .12);
-  --accent: #EE8CC6; --accent-ink: #2B1F33; --accent-soft: #3A2238; --lime: #C6E46A;
-  --am-1: #3A2A1E; --am-2: #352F1C; --am-ink: #F5BE7A; --pm-1: #262245; --pm-2: #1F2A45; --pm-ink: #B9AEFF;
-  --warn: #F29A7A; --warn-soft: #3B2220; --ok: #7FD1A0;
-  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35); --shadow-lg: 0 24px 60px rgba(0,0,0,.6); color-scheme: dark } }
+  --bg: #0E1217; --surface: #171D25; --surface-2: #1C232D; --ink: #E9EDF2; --muted: #9AA5B1; --line: rgba(233, 237, 242, .12);
+  --accent: #8EA2FF; --accent-ink: #0E1217; --accent-soft: #1E2647;
+  --ok: #5FD19A; --ok-soft: #16302A; --warn: #F29A7A; --warn-soft: #3A211C; --gold: #E5BE5C; --gold-soft: #33290F;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .3); --shadow-lg: 0 18px 50px rgba(0, 0, 0, .6); color-scheme: dark } }
 :root[data-theme="dark"] {
-  --bg: #17111C; --bg-2: #1C1428; --glow-1: rgba(162, 59, 124, .28); --glow-2: rgba(91, 75, 181, .28); --glow-3: rgba(182, 217, 76, .10);
-  --surface: rgba(38, 28, 46, .72); --surface-solid: #261C2E; --ink: #F3EAF5; --muted: #B3A3BC; --line: rgba(230, 200, 240, .12);
-  --accent: #EE8CC6; --accent-ink: #2B1F33; --accent-soft: #3A2238; --lime: #C6E46A;
-  --am-1: #3A2A1E; --am-2: #352F1C; --am-ink: #F5BE7A; --pm-1: #262245; --pm-2: #1F2A45; --pm-ink: #B9AEFF;
-  --warn: #F29A7A; --warn-soft: #3B2220; --ok: #7FD1A0;
-  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35); --shadow-lg: 0 24px 60px rgba(0,0,0,.6); color-scheme: dark }
+  --bg: #0E1217; --surface: #171D25; --surface-2: #1C232D; --ink: #E9EDF2; --muted: #9AA5B1; --line: rgba(233, 237, 242, .12);
+  --accent: #8EA2FF; --accent-ink: #0E1217; --accent-soft: #1E2647;
+  --ok: #5FD19A; --ok-soft: #16302A; --warn: #F29A7A; --warn-soft: #3A211C; --gold: #E5BE5C; --gold-soft: #33290F;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .3); --shadow-lg: 0 18px 50px rgba(0, 0, 0, .6); color-scheme: dark }
 
 * { box-sizing: border-box }
 html { min-height: 100% }
-body { min-height: 100%; color: var(--ink); font: 300 15px/1.55 var(--sans);
-  background: radial-gradient(900px 500px at 8% -5%, var(--glow-1), transparent 60%), radial-gradient(800px 520px at 100% 10%, var(--glow-2), transparent 60%),
-    radial-gradient(700px 400px at 50% 110%, var(--glow-3), transparent 60%), linear-gradient(180deg, var(--bg), var(--bg-2)); background-color: var(--bg); background-attachment: fixed }
-.wrap { max-width: 1100px; margin: 0 auto; padding-block: 28px 56px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 26px }
-h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance }
-h1 { font-family: var(--serif); font-size: clamp(44px, 7vw, 68px); line-height: .95; letter-spacing: -.02em }
-h1 em { color: var(--accent) }
-h2 { font-family: var(--serif); font-size: 30px; line-height: 1.1 }
-h3 { font-family: var(--serif); font-size: 22px; line-height: 1.1; overflow-wrap: anywhere }
+body { margin: 0; min-height: 100%; color: var(--ink); font: 400 15px/1.5 var(--sans);
+  background: radial-gradient(var(--line) 1px, transparent 1.2px) 0 0 / 22px 22px, var(--bg); background-color: var(--bg) }
+.wrap { max-width: 980px; margin: 0 auto; padding-block: 24px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px }
+h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 600; letter-spacing: -.02em; text-wrap: balance }
+h1 { font-size: clamp(26px, 5vw, 40px); line-height: 1.05 }
+h1 em { font-style: normal; color: var(--accent) }
+h2 { font-size: 22px; line-height: 1.15 }
+h3 { font-size: 16px; line-height: 1.25; overflow-wrap: anywhere }
 button, input, select, textarea { font: inherit; color: inherit }
 button { cursor: pointer }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
 .muted { color: var(--muted) }
-.eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--muted) }
+.eyebrow { font-size: 11.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
 
-header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 24px }
-.brand { display: grid; gap: 6px }
-.top-end { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; margin-left: auto }
-.theme-switch { display: flex; gap: 2px; background: var(--surface); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: 999px; padding: 4px; box-shadow: var(--shadow) }
-.theme-switch button { display: grid; place-items: center; width: 36px; height: 36px; border: 0; background: none; border-radius: 999px; color: var(--muted); transition: background .2s, color .2s; -webkit-tap-highlight-color: transparent }
-.theme-switch button[aria-pressed="true"] { background: var(--ink); color: var(--bg) }
-.theme-switch svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round }
-nav.tabs { display: flex; gap: 2px; background: var(--surface); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: 999px; padding: 4px; box-shadow: var(--shadow) }
-nav.tabs button { border: 0; background: none; padding: 8px 16px; border-radius: 999px; font-weight: 400; color: var(--muted); transition: background .2s, color .2s }
-nav.tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); font-weight: 500 }
+header.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px }
+.brand { display: flex; align-items: center; gap: 14px; min-width: 0 }
+.logo { width: 48px; height: 48px; flex: none; border-radius: 14px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; box-shadow: var(--shadow) }
+.logo svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round }
+.brand-txt { display: grid; gap: 2px; min-width: 0 }
+.top-end { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-left: auto }
+.seg { display: flex; gap: 2px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3px; box-shadow: var(--shadow) }
+.seg button { display: grid; place-items: center; min-width: 36px; height: 34px; padding: 0 9px; border: 0; background: none; border-radius: 9px; color: var(--muted); font-size: 13px; font-weight: 600; transition: background .15s, color .15s; -webkit-tap-highlight-color: transparent }
+.seg button[aria-pressed="true"], .seg button[aria-selected="true"] { background: var(--ink); color: var(--bg) }
+.seg svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round }
+nav.tabs button { padding: 0 14px; font-size: 14px; font-weight: 500 }
 .bottom-nav { display: none }
 @media (max-width: 700px) {
   header.top nav.tabs { display: none }
-  .brand h1 { font-size: 40px }
-  .brand .eyebrow { display: none }
-  .wrap { padding-block: 16px calc(96px + env(safe-area-inset-bottom, 0px)); gap: 18px }
-  .bottom-nav { display: grid; grid-template-columns: repeat(3, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 15;
-    padding: 6px max(8px, env(safe-area-inset-left, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-right, 0px));
-    background: var(--surface); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-top: 1px solid var(--line) }
-  .bottom-nav button { border: 0; background: none; display: grid; justify-items: center; gap: 2px; padding: 6px 0; font-size: 11.5px; font-weight: 500; color: var(--muted); border-radius: 14px; -webkit-tap-highlight-color: transparent }
-  .bottom-nav svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; padding: 2px 14px; box-sizing: content-box; border-radius: 999px; transition: background .2s }
-  .bottom-nav button[aria-current="page"] { color: var(--accent) }
-  .bottom-nav button[aria-current="page"] svg { background: var(--accent-soft) }
-  .panel { padding: 16px }
+  .logo { width: 40px; height: 40px; border-radius: 12px }
+  .logo svg { width: 24px; height: 24px }
+  .brand .eyebrow { font-size: 10.5px }
+  .wrap { padding-block: 14px calc(104px + env(safe-area-inset-bottom, 0px)); gap: 16px }
+  .bottom-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; position: fixed; z-index: 15;
+    left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    padding: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow-lg) }
+  .bottom-nav button { border: 0; background: none; display: grid; justify-items: center; gap: 2px; padding: 7px 0 6px; font-size: 11.5px; font-weight: 500; color: var(--muted); border-radius: 14px; -webkit-tap-highlight-color: transparent; transition: background .15s, color .15s }
+  .bottom-nav svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round }
+  .bottom-nav button[aria-current="page"] { color: var(--accent); background: var(--accent-soft) }
+  .card { padding: 16px }
 }
 
-.glass { background: var(--surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--line); border-radius: 26px; box-shadow: var(--shadow) }
-.panel { padding: 22px; display: grid; gap: 14px; min-width: 0 }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); padding: 22px; display: grid; gap: 14px; min-width: 0 }
 .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap }
 .sec-head > div { display: grid; gap: 4px }
-.hint { margin: 0; font-size: 13.5px; color: var(--muted); max-width: 62ch }
+.hint { margin: 0; font-size: 14px; color: var(--muted); max-width: 62ch }
 
-/* Stats */
-.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px }
-.stat { display: grid; gap: 4px; align-content: start; padding: 14px 16px; border-radius: 18px; background: var(--surface-solid); border: 1px solid var(--line) }
-.stat b { font-family: var(--serif); font-weight: 400; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums }
-.stat b small { font-size: 16px; color: var(--muted) }
-@media (max-width: 600px) { .stats { gap: 8px } .stat { padding: 12px } .stat b { font-size: 28px } }
+/* Overview */
+.overview { display: grid; grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr)); gap: 10px }
+.ov { display: grid; gap: 6px; align-content: start; padding: 16px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow) }
+.ov b { font-family: var(--display); font-weight: 600; font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.03em }
+.ov b small { font-size: 15px; color: var(--muted); font-weight: 500 }
+.ov.main { background: var(--ink); color: var(--bg); border-color: transparent }
+.ov.main .eyebrow { color: color-mix(in srgb, var(--bg) 70%, transparent) }
+.ov.main b { font-size: 40px }
+.segbar { display: flex; gap: 3px; margin-top: 4px }
+.segbar i { flex: 1; height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--bg) 22%, transparent) }
+.segbar i.on { background: var(--ok) }
+@media (max-width: 600px) { .overview { grid-template-columns: 1fr 1fr } .ov.main { grid-column: 1 / -1 } .ov { padding: 14px } .ov b { font-size: 26px } }
 
 /* Checklists */
-.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; counter-reset: st }
-.steps li { counter-increment: st; display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 8px; align-items: center }
-.steps li::before { content: counter(st); font-family: var(--serif); font-size: 18px; color: var(--muted); text-align: right }
+.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; counter-reset: st }
+.steps li { counter-increment: st; display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 6px; align-items: center; border-radius: 14px }
+.steps li::before { content: counter(st, decimal-leading-zero); font-family: var(--display); font-size: 11px; font-weight: 500; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums }
 .steps.plain li { grid-template-columns: minmax(0, 1fr) auto }
 .steps.plain li::before { content: none }
-.step { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; align-items: center; padding: 7px 8px; border-radius: 12px; cursor: pointer; transition: background .15s; min-height: 44px }
-.step:hover { background: color-mix(in srgb, var(--surface-solid) 55%, transparent) }
-.step input { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; margin: 0; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--muted) 60%, transparent); background: var(--surface-solid); display: grid; place-items: center; cursor: pointer; transition: background .15s, border-color .15s }
-.step input::after { content: "✓"; font-size: 13px; line-height: 1; color: #fff; opacity: 0 }
+.steps li + li { border-top: 1px dashed var(--line); border-radius: 0 }
+.step { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 12px; align-items: center; padding: 9px 8px; border-radius: 12px; cursor: pointer; transition: background .15s; min-height: 48px }
+.step:hover { background: var(--surface-2) }
+.step input { appearance: none; -webkit-appearance: none; width: 24px; height: 24px; margin: 0; border-radius: 8px; border: 1.5px solid color-mix(in srgb, var(--muted) 55%, transparent); background: var(--surface); display: grid; place-items: center; cursor: pointer; transition: background .15s, border-color .15s }
+.step input::after { content: ""; width: 10px; height: 6px; border: solid var(--surface); border-width: 0 0 2.2px 2.2px; transform: translateY(-1px) rotate(-45deg); opacity: 0 }
 .step input:checked { background: var(--ok); border-color: var(--ok) }
 .step input:checked::after { opacity: 1 }
 .step .txt { overflow-wrap: anywhere; min-width: 0 }
-.step .nm { display: block }
-.step .sub { display: block; font-size: 12.5px; color: var(--muted); white-space: pre-line }
+.step .nm { display: block; font-weight: 500 }
+.step .sub { display: block; font-size: 13px; color: var(--muted); white-space: pre-line }
 .step input:checked + .txt .nm { color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--muted) 70%, transparent) }
-.edit-btn { border: 1px solid transparent; background: none; border-radius: 999px; padding: 6px 10px; font-size: 12.5px; color: var(--muted); white-space: nowrap; min-height: 36px }
-.edit-btn:hover { border-color: var(--line); background: var(--surface-solid); color: var(--ink) }
-.needed { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px }
+.edit-btn { border: 1px solid transparent; background: none; border-radius: 10px; width: 40px; height: 40px; padding: 0; display: grid; place-items: center; color: var(--muted) }
+.edit-btn svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round }
+.edit-btn:hover { border-color: var(--line); background: var(--surface-2); color: var(--ink) }
+.needed { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px }
 .add-row { display: flex; gap: 8px; align-items: center }
 .add-row .input { flex: 1; min-width: 0 }
-.add-row .btn { white-space: nowrap; min-height: 40px }
+.add-row .btn { white-space: nowrap; min-height: 42px }
 
 /* Buttons, pills, forms */
-.btn { border: 1px solid var(--line); background: var(--surface-solid); border-radius: 999px; padding: 7px 14px; font-weight: 400; transition: border-color .2s, transform .2s }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 8px 14px; font-weight: 500; font-size: 14px; transition: border-color .15s, background .15s }
 .btn:hover { border-color: var(--accent) }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 500 }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) }
 .btn.ghost { background: none; border-color: transparent; color: var(--muted) }
-.btn.small { padding: 4px 11px; font-size: 13px }
+.btn.small { padding: 6px 12px; font-size: 13px }
 .btn.danger { color: var(--warn) }
 .btn.danger.armed { background: var(--warn-soft); border-color: transparent }
 .btn:disabled { opacity: .45; cursor: default }
 .btns { display: flex; flex-wrap: wrap; gap: 6px }
-.tag { display: inline-block; font-size: 12px; font-weight: 500; padding: 2px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); white-space: nowrap }
-.mini { font-size: 11.5px; padding: 1px 8px; border-radius: 999px; background: var(--surface-solid); border: 1px solid var(--line); color: var(--muted); white-space: nowrap }
-.mini.ok { color: var(--ok); border-color: transparent; background: color-mix(in srgb, var(--ok) 14%, var(--surface-solid)) }
-.mini.warn { color: var(--warn); border-color: transparent; background: var(--warn-soft) }
-.field { display: grid; gap: 5px; font-size: 13px; color: var(--muted) }
-.input { border: 1px solid var(--line); background: var(--surface-solid); border-radius: 14px; padding: 9px 12px; color: var(--ink); width: 100%; font-size: 15px }
-textarea.input { resize: vertical; min-height: 76px; line-height: 1.45 }
-.rating { display: flex; flex-wrap: wrap; gap: 6px }
-.rating button { border: 1px solid var(--line); background: var(--surface-solid); border-radius: 999px; padding: 6px 13px; font-size: 13.5px; min-height: 36px }
-.rating button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) }
-.bar { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden }
-.bar span { display: block; height: 100%; border-radius: 999px; background: var(--ok); transition: width .25s }
-.complete-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--ok); color: #fff; font-weight: 500; font-size: 13px; padding: 4px 12px; border-radius: 999px }
-.empty-state { text-align: center; padding: 36px 20px; display: grid; gap: 12px; justify-items: center }
+.pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 8px; white-space: nowrap; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line) }
+.pill.applying { background: var(--gold-soft); color: var(--gold); border-color: transparent }
+.pill.open, .pill.ok { background: var(--ok-soft); color: var(--ok); border-color: transparent }
+.pill.accent { background: var(--accent-soft); color: var(--accent); border-color: transparent }
+.field { display: grid; gap: 6px; font-size: 13px; font-weight: 500; color: var(--muted) }
+.input { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 12px; color: var(--ink); width: 100%; font-size: 15px; font-weight: 400 }
+textarea.input { resize: vertical; min-height: 80px; line-height: 1.45 }
+.choice { display: flex; flex-wrap: wrap; gap: 6px }
+.choice button { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 7px 12px; font-size: 13.5px; font-weight: 500; min-height: 38px; color: var(--ink) }
+.choice button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg) }
+.bar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden }
+.bar span { display: block; height: 100%; border-radius: 3px; background: var(--ok); transition: width .25s }
+.done-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--ok); color: var(--surface); font-weight: 600; font-size: 13px; padding: 4px 12px; border-radius: 10px }
+.empty-state { text-align: center; padding: 32px 16px; display: grid; gap: 10px; justify-items: center; border: 1.5px dashed var(--line); border-radius: 16px }
 .empty-state p { max-width: 46ch; margin: 0 }
-details summary { cursor: pointer; font-size: 13.5px; color: var(--muted); padding: 4px 2px }
-details summary:hover { color: var(--ink) }
+details summary { cursor: pointer; font-size: 14px; font-weight: 500; color: var(--accent); padding: 4px 2px }
 
 /* Banks */
-.bank-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px }
-.bank-card { text-align: left; border: 1px solid var(--line); background: var(--surface-solid); color: var(--ink); border-radius: 22px; padding: 16px; display: grid; gap: 12px; align-content: start; min-width: 0; transition: transform .2s, box-shadow .2s }
-.bank-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg) }
-.bank-card.is-open { box-shadow: 0 0 0 2px var(--ok), var(--shadow) }
-.bank-card.is-no { opacity: .6 }
+.bank-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px }
+.bank-card { position: relative; overflow: hidden; text-align: left; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 18px; padding: 16px 16px 16px 20px; display: grid; gap: 12px; align-content: start; min-width: 0; transition: transform .15s, box-shadow .15s, border-color .15s }
+.bank-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--line) }
+.bank-card.st-applying::before { background: var(--gold) }
+.bank-card.st-open::before { background: var(--ok) }
+.bank-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)) }
+.bank-card.st-no { opacity: .55 }
 .bank-card .head { display: flex; align-items: start; justify-content: space-between; gap: 8px }
 .bank-card .note { margin: 0; font-size: 13px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere }
-.prog { display: grid; grid-template-columns: 84px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px; font-variant-numeric: tabular-nums }
-.prog .lab { color: var(--muted); font-size: 12px }
+.prog { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px; font-variant-numeric: tabular-nums }
+.prog .lab { color: var(--muted); font-size: 12.5px }
 
 /* Documents */
-.doc-list { display: grid; gap: 8px }
-.doc-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 4px 8px 4px 4px; border-radius: 16px; background: var(--surface-solid); border: 1px solid var(--line) }
 .picks { display: grid; gap: 5px; padding-top: 6px }
-.pick { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: center; padding: 9px 12px; border-radius: 14px; background: color-mix(in srgb, var(--surface-solid) 55%, transparent); border: 1px solid var(--line); cursor: pointer; transition: background .15s; overflow-wrap: anywhere }
-.pick:has(input:checked) { background: var(--surface-solid); box-shadow: 0 0 0 1.5px var(--accent); border-color: transparent }
+.pick { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); cursor: pointer; transition: background .15s; overflow-wrap: anywhere; color: var(--ink); font-weight: 400; font-size: 14.5px }
+.pick:has(input:checked) { box-shadow: 0 0 0 1.5px var(--accent); border-color: transparent }
 .pick input { width: 17px; height: 17px; accent-color: var(--accent); margin: 0 }
 
 /* Sheet */
-.scrim { position: fixed; inset: 0; background: rgba(40, 20, 45, .35); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index: 20 }
-.sheet { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 100%); background: var(--surface-solid); z-index: 21; box-shadow: var(--shadow-lg);
-  display: grid; grid-template-rows: auto minmax(0, 1fr); border-radius: 28px 0 0 28px;
+.scrim { position: fixed; inset: 0; background: rgba(10, 16, 22, .4); z-index: 20 }
+.sheet { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 100%); background: var(--bg); z-index: 21; box-shadow: var(--shadow-lg);
+  display: grid; grid-template-rows: auto minmax(0, 1fr); border-radius: 22px 0 0 22px;
   padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); padding-right: env(safe-area-inset-right, 0px) }
 @media (max-width: 520px) { .sheet { border-radius: 0 } }
-.sheet-head { display: flex; align-items: start; justify-content: space-between; gap: 12px; padding: 22px 22px 14px; border-bottom: 1px solid var(--line) }
+.sheet-head { display: flex; align-items: start; justify-content: space-between; gap: 12px; padding: 20px 20px 14px; border-bottom: 1px solid var(--line); background: var(--surface) }
 .sheet-head > div { display: grid; gap: 4px; min-width: 0 }
-.sheet-head h2 { font-size: 32px; overflow-wrap: anywhere }
-.sheet-body { overflow-y: auto; padding: 18px 22px 32px; display: grid; gap: 20px; align-content: start }
-.sec { display: grid; gap: 10px; border-radius: 20px; padding: 14px; background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface-solid)); border: 1px solid var(--line) }
-.sec.plain { padding: 0; background: none; border: 0 }
-.sec .doc-row { background: var(--surface-solid) }
-.status { font-size: 12px; color: var(--muted); margin: 0 }
-.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 18px; font-size: 14px; line-height: 1.4; text-align: center; z-index: 30; box-shadow: var(--shadow-lg); width: max-content; max-width: min(420px, calc(100% - 32px)); overflow-wrap: anywhere }
+.sheet-head h2 { overflow-wrap: anywhere }
+.sheet-body { overflow-y: auto; padding: 16px 16px 32px; display: grid; gap: 14px; align-content: start }
+.sheet-body .card { padding: 16px; gap: 10px }
+.status { font-size: 12.5px; color: var(--muted); margin: 0 }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 14px; font-size: 14px; line-height: 1.4; text-align: center; z-index: 30; box-shadow: var(--shadow-lg); width: max-content; max-width: min(420px, calc(100% - 32px)); overflow-wrap: anywhere }
 @media (prefers-reduced-motion: no-preference) {
-  .sheet { animation: slide .25s cubic-bezier(.2, .8, .2, 1) } @keyframes slide { from { transform: translateX(40px); opacity: .5 } }
+  .sheet { animation: slide .22s cubic-bezier(.2, .8, .2, 1) } @keyframes slide { from { transform: translateX(32px); opacity: .6 } }
 }
 </style>
 
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <span class="eyebrow">Opening a business account</span>
-      <h1>Bank <em>Checklist</em></h1>
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg></span>
+      <div class="brand-txt"><span class="eyebrow" data-t="eyebrow"></span><h1 data-t="title"></h1></div>
     </div>
     <div class="top-end">
-      <div class="theme-switch" role="group" aria-label="Colour scheme">
-        <button data-act="theme" data-theme="auto" aria-label="Match device" title="Match device"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor" stroke="none"/></svg></button>
-        <button data-act="theme" data-theme="light" aria-label="Light" title="Light"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg></button>
-        <button data-act="theme" data-theme="dark" aria-label="Dark" title="Dark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+      <div class="seg" role="group" data-t-label="language">
+        <button data-act="lang" data-lang="ru">RU</button>
+        <button data-act="lang" data-lang="sr">SR</button>
       </div>
-      <nav class="tabs" role="tablist" aria-label="Views">
-        <button role="tab" data-act="tab" data-tab="steps">Steps</button>
-        <button role="tab" data-act="tab" data-tab="banks">Banks</button>
-        <button role="tab" data-act="tab" data-tab="docs">Documents</button>
+      <div class="seg" role="group" data-t-label="theme">
+        <button data-act="theme" data-theme="auto" data-t-label="auto"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor" stroke="none"/></svg></button>
+        <button data-act="theme" data-theme="light" data-t-label="light"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg></button>
+        <button data-act="theme" data-theme="dark" data-t-label="dark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+      </div>
+      <nav class="tabs seg" role="tablist">
+        <button role="tab" data-act="tab" data-tab="steps" data-t="tabSteps"></button>
+        <button role="tab" data-act="tab" data-tab="banks" data-t="tabBanks"></button>
+        <button role="tab" data-act="tab" data-tab="docs" data-t="tabDocs"></button>
       </nav>
     </div>
   </header>
-  <main id="main" style="display:grid;gap:26px"></main>
+  <main id="main" style="display:grid;gap:16px"></main>
   <p class="status" id="status"></p>
 </div>
-<nav class="bottom-nav" aria-label="Views">
-  <button data-act="tab" data-tab="steps"><svg viewBox="0 0 24 24" aria-hidden="true" data-nav="steps"></svg><span>Steps</span></button>
-  <button data-act="tab" data-tab="banks"><svg viewBox="0 0 24 24" aria-hidden="true" data-nav="banks"></svg><span>Banks</span></button>
-  <button data-act="tab" data-tab="docs"><svg viewBox="0 0 24 24" aria-hidden="true" data-nav="docs"></svg><span>Documents</span></button>
+<nav class="bottom-nav">
+  <button data-act="tab" data-tab="steps"><svg viewBox="0 0 24 24" aria-hidden="true" data-nav="steps"></svg><span data-t="tabSteps"></span></button>
+  <button data-act="tab" data-tab="banks"><svg viewBox="0 0 24 24" aria-hidden="true" data-nav="banks"></svg><span data-t="tabBanks"></span></button>
+  <button data-act="tab" data-tab="docs"><svg viewBox="0 0 24 24" aria-hidden="true" data-nav="docs"></svg><span data-t="tabDocs"></span></button>
 </nav>
 <div id="sheetRoot"></div>
 <div class="toast" id="toast" hidden></div>
@@ -216,35 +218,139 @@ const NAV_ICONS = {
   banks: '<path d="M3 21l18 0"/><path d="M3 10l18 0"/><path d="M5 6l7 -3l7 3"/><path d="M4 10l0 11"/><path d="M20 10l0 11"/><path d="M8 14l0 3"/><path d="M12 14l0 3"/><path d="M16 14l0 3"/>',
   docs: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 9l1 0"/><path d="M9 13l6 0"/><path d="M9 17l6 0"/>'
 };
-const STATUS = { considering: "Considering", applying: "Applying", open: "Account open", no: "Not for me" };
+
+/* Tabler pencil and x (MIT) for the row buttons. */
+const PENCIL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10.5 -10.5a2.83 2.83 0 1 0 -4 -4l-10.5 10.5v4"/><path d="M13.5 6.5l4 4"/></svg>';
+const CROSS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></svg>';
+
+/* ---------- words (Russian and Serbian Latin) ---------- */
+const T = {
+  ru: {
+    eyebrow: "Бизнес-счёт в Сербии", title: "Открытие <em>счёта</em>", language: "Язык", theme: "Тема", auto: "Как на устройстве", light: "Светлая", dark: "Тёмная",
+    tabSteps: "Шаги", tabBanks: "Банки", tabDocs: "Документы",
+    progress: "Общий прогресс", genSteps: "Общие шаги", docsReady: "Документы готовы", banks: "Банки",
+    everyBank: "Для любого банка", generalSteps: "Общие шаги",
+    generalHint: "Шаги, которые нужны в любом банке. Шаги конкретного банка — во вкладке «Банки».",
+    noGeneral: "Общих шагов пока нет. Добавьте первый ниже.", addGeneral: "Добавить общий шаг", add: "Добавить", allDone: "Всё готово",
+    backupEyebrow: "Резервная копия", backupTitle: "Сохраните копию",
+    backupHint: "Чек-лист хранится на этом устройстве. Сохраните файл, чтобы не потерять данные или перенести их на новый телефон.",
+    saveBackup: "Сохранить файл", restore: "Восстановить из файла",
+    compare: "Сравнение", banksTitle: "Банки",
+    banksHint: "Добавьте банки, которые рассматриваете. Откройте банк, чтобы отметить нужные документы и добавить его собственные шаги.",
+    bankName: "Название банка", addBank: "Добавить банк", noBanks: "Банков пока нет", noBanksHint: "Введите название банка выше и нажмите «Добавить банк».",
+    progDocs: "Документы", progSteps: "Шаги банка",
+    st_considering: "Рассматриваю", st_applying: "Подаю заявку", st_open: "Счёт открыт", st_no: "Не подходит",
+    papers: "Ваши бумаги", docsTitle: "Документы", readyOf: (n, t) => `готово ${n} из ${t}`, doneOf: (n, t) => `сделано ${n} из ${t}`,
+    docsHint: "Отметьте документ, когда он у вас есть. Он засчитается для всех банков, которые его просят.",
+    noDocs: "Документов пока нет. Добавьте первый ниже.", addDoc: "Добавить документ", noBankAsks: "Пока ни один банк не просит",
+    bank: "Банк", name: "Название", status: "Статус", notes: "Заметки", bankNotesPh: "Тарифы, отделение, контактное лицо, что вам сказали",
+    docsAsked: "Какие документы просят", noneChosen: "Пока ничего не выбрано.", chooseDocs: n => `Выбрать из ваших документов (${n})`, addNewDoc: "Добавить новый документ",
+    stepsHere: "Шаги в этом банке", bankStepsHint: "Добавьте то, что нужно только в этом банке, например встречу или анкету.", addBankStep: "Добавить шаг для этого банка",
+    plusGeneral: (n, t) => `Плюс общие шаги для всех банков: сделано ${n} из ${t}.`,
+    deleteBank: "Удалить банк", confirmDeleteBank: "Нажмите ещё раз, чтобы удалить банк",
+    remove: "Убрать", edit: "Изменить", close: "Закрыть",
+    editDoc: "Изменить документ", editStep: "Изменить шаг", generalStep: "Общий шаг", document: "Документ", step: "Шаг",
+    docNotesPh: "Где получить, насколько свежим должен быть", stepNotesPh: "Подробности, ссылки, кому позвонить",
+    askedBy: "Какие банки просят", moveUp: "Выше", moveDown: "Ниже", save: "Сохранить", cancel: "Отмена", del: "Удалить", confirmDelete: "Нажмите ещё раз, чтобы удалить",
+    removedDoc: (d, b) => `«${d}» убран из банка ${b}. Он остаётся в списке документов.`, deleted: x => `Удалено: ${x}.`,
+    needName: "У банка должно быть название.", saved: "Сохранено.", dupBank: x => `${x} уже в списке.`,
+    addedBank: x => `${x} добавлен. Нажмите на него, чтобы выбрать нужные документы.`,
+    backupSaved: "Резервная копия сохранена.", backupFail: "Не удалось сохранить копию. Попробуйте ещё раз чуть позже.",
+    restored: "Чек-лист восстановлен из файла.", badFile: "Это не файл резервной копии. Выберите файл, сохранённый через «Сохранить файл».",
+    saveFail: "Не удалось сохранить изменение. Проверьте подключение и попробуйте снова.",
+    stLocal: "Чек-лист хранится в этом браузере на этом устройстве.", stDb: "Чек-лист сохраняется в вашем аккаунте и синхронизируется между устройствами.",
+    stSlow: "Чек-лист ещё загружается. Проверьте подключение и перезагрузите страницу.", stLost: "Связь с сохранённым чек-листом потеряна. Перезагрузите страницу."
+  },
+  sr: {
+    eyebrow: "Poslovni račun u Srbiji", title: "Otvaranje <em>računa</em>", language: "Jezik", theme: "Tema", auto: "Kao na uređaju", light: "Svetla", dark: "Tamna",
+    tabSteps: "Koraci", tabBanks: "Banke", tabDocs: "Dokumenta",
+    progress: "Ukupan napredak", genSteps: "Opšti koraci", docsReady: "Spremna dokumenta", banks: "Banke",
+    everyBank: "Za svaku banku", generalSteps: "Opšti koraci",
+    generalHint: "Koraci koji važe za svaku banku. Koraci za pojedinačnu banku su na kartici „Banke“.",
+    noGeneral: "Još nema opštih koraka. Dodajte prvi ispod.", addGeneral: "Dodaj opšti korak", add: "Dodaj", allDone: "Sve gotovo",
+    backupEyebrow: "Rezervna kopija", backupTitle: "Sačuvajte kopiju",
+    backupHint: "Lista je sačuvana na ovom uređaju. Sačuvajte fajl da ne izgubite podatke ili da ih prenesete na novi telefon.",
+    saveBackup: "Sačuvaj fajl", restore: "Vrati iz fajla",
+    compare: "Poređenje", banksTitle: "Banke",
+    banksHint: "Dodajte banke koje razmatrate. Otvorite banku da označite dokumenta koja traži i dodate njene korake.",
+    bankName: "Naziv banke", addBank: "Dodaj banku", noBanks: "Još nema banaka", noBanksHint: "Upišite naziv banke iznad i dodirnite „Dodaj banku“.",
+    progDocs: "Dokumenta", progSteps: "Koraci banke",
+    st_considering: "Razmatram", st_applying: "Podnosim zahtev", st_open: "Račun otvoren", st_no: "Ne odgovara",
+    papers: "Vaša dokumenta", docsTitle: "Dokumenta", readyOf: (n, t) => `spremno ${n} od ${t}`, doneOf: (n, t) => `urađeno ${n} od ${t}`,
+    docsHint: "Označite dokument kada ga imate. Računa se za sve banke koje ga traže.",
+    noDocs: "Još nema dokumenata. Dodajte prvi ispod.", addDoc: "Dodaj dokument", noBankAsks: "Još ga nijedna banka ne traži",
+    bank: "Banka", name: "Naziv", status: "Status", notes: "Beleške", bankNotesPh: "Naknade, filijala, kontakt osoba, šta su vam rekli",
+    docsAsked: "Koja dokumenta traže", noneChosen: "Još ništa nije izabrano.", chooseDocs: n => `Izaberi iz vaših dokumenata (${n})`, addNewDoc: "Dodaj novi dokument",
+    stepsHere: "Koraci u ovoj banci", bankStepsHint: "Dodajte ono što je potrebno samo u ovoj banci, na primer sastanak ili upitnik.", addBankStep: "Dodaj korak za ovu banku",
+    plusGeneral: (n, t) => `Plus opšti koraci za sve banke: urađeno ${n} od ${t}.`,
+    deleteBank: "Obriši banku", confirmDeleteBank: "Dodirnite ponovo da obrišete banku",
+    remove: "Ukloni", edit: "Izmeni", close: "Zatvori",
+    editDoc: "Izmeni dokument", editStep: "Izmeni korak", generalStep: "Opšti korak", document: "Dokument", step: "Korak",
+    docNotesPh: "Gde se dobija, koliko sme da bude star", stepNotesPh: "Detalji, linkovi, koga pozvati",
+    askedBy: "Koje banke traže", moveUp: "Gore", moveDown: "Dole", save: "Sačuvaj", cancel: "Otkaži", del: "Obriši", confirmDelete: "Dodirnite ponovo da obrišete",
+    removedDoc: (d, b) => `„${d}“ je uklonjen iz banke ${b}. Ostaje na listi dokumenata.`, deleted: x => `Obrisano: ${x}.`,
+    needName: "Banka mora imati naziv.", saved: "Sačuvano.", dupBank: x => `${x} je već na listi.`,
+    addedBank: x => `Dodato: ${x}. Dodirnite banku da izaberete dokumenta koja traži.`,
+    backupSaved: "Rezervna kopija je sačuvana.", backupFail: "Kopija nije sačuvana. Pokušajte ponovo malo kasnije.",
+    restored: "Lista je vraćena iz fajla.", badFile: "Ovo nije fajl rezervne kopije. Izaberite fajl sačuvan preko „Sačuvaj fajl“.",
+    saveFail: "Izmena nije sačuvana. Proverite vezu i pokušajte ponovo.",
+    stLocal: "Lista je sačuvana u ovom pregledaču na ovom uređaju.", stDb: "Lista se čuva na vašem nalogu i sinhronizuje između uređaja.",
+    stSlow: "Lista se još učitava. Proverite vezu i ponovo učitajte stranicu.", stLost: "Veza sa sačuvanom listom je prekinuta. Ponovo učitajte stranicu."
+  }
+};
+
+/* Starting list: steps and documents for a business account at a Serbian bank, for a company that is already registered.
+   Starter items keep a key so they show in the chosen language; once edited they keep the text as written. */
+const STARTER = {
+  s_compare: { ru: ["Сравнить банки", "Ежемесячная плата, e-banking, карты, платежи за границу, говорят ли сотрудники по-английски или по-русски."],
+               sr: ["Uporediti banke", "Mesečne naknade, e-banking, kartice, plaćanja u inostranstvo, da li zaposleni govore engleski ili ruski."] },
+  s_signer: { ru: ["Решить, кто будет подписывать по счёту", "Обычно директор. Остальным нужны полномочия."], sr: ["Odlučiti ko će potpisivati po računu", "Obično direktor. Ostali moraju biti ovlašćeni."] },
+  s_stamp: { ru: ["Решить, использовать ли печать", "Необязательно. Некоторые банки всё ещё спрашивают."], sr: ["Odlučiti da li ćete koristiti pečat", "Nije obavezno. Neke banke i dalje pitaju."] },
+  s_book: { ru: ["Записаться на встречу или подать заявку онлайн"], sr: ["Zakazati sastanak ili podneti zahtev onlajn"] },
+  s_sign: { ru: ["Подписать договор и карточку образцов подписей", "Karton deponovanih potpisa."], sr: ["Potpisati ugovor i karton deponovanih potpisa"] },
+  s_ebank: { ru: ["Подключить e-banking и бизнес-карту"], sr: ["Aktivirati e-banking i poslovnu karticu"] },
+  s_acct: { ru: ["Передать номер счёта бухгалтеру"], sr: ["Poslati broj računa knjigovođi"] },
+  d_apr: { ru: ["Выписка из APR", "Izvod iz registra privrednih subjekata. Банки часто просят свежую."], sr: ["Izvod iz APR-a", "Izvod iz registra privrednih subjekata. Banke često traže noviji."] },
+  d_pib: { ru: ["Подтверждение PIB", "Potvrda o PIB-u."], sr: ["Potvrda o PIB-u"] },
+  d_osn: { ru: ["Учредительный акт", "Osnivački akt."], sr: ["Osnivački akt"] },
+  d_id: { ru: ["Паспорт или ID-карта директора"], sr: ["Lična karta ili pasoš direktora"] },
+  d_ben: { ru: ["Выписка о бенефициарах", "Из Centralna evidencija stvarnih vlasnika."], sr: ["Izvod iz evidencije stvarnih vlasnika", "Centralna evidencija stvarnih vlasnika."] },
+  d_res: { ru: ["Вид на жительство", "Только если директор или владелец — иностранец."], sr: ["Dozvola boravka", "Samo ako je direktor ili vlasnik strani državljanin."] },
+  d_stamp: { ru: ["Печать компании", "Только если вы её используете."], sr: ["Pečat firme", "Samo ako ga koristite."] }
+};
+const GENERAL_KEYS = ["s_compare", "s_signer", "s_stamp", "s_book", "s_sign", "s_ebank", "s_acct"];
+const DOC_KEYS = ["d_apr", "d_pib", "d_osn", "d_id", "d_ben", "d_res", "d_stamp"];
+/* The first version started in English; these map its untouched starter items onto the new ones. null = dropped (company registration). */
+const OLD_EN = {
+  "Register the company with APR": [null, "Agencija za privredne registre. You get the registration decision (rešenje o registraciji)."],
+  "Note the PIB and matični broj": [null, "Tax ID and registration number, both issued at registration."],
+  "Decide who will sign for the account": ["s_signer", "Usually the director. Anyone else needs to be authorised."],
+  "Decide whether to use a company stamp": ["s_stamp", "Optional. Some banks still ask whether you use one."],
+  "Compare the banks": ["s_compare", "Monthly fees, e-banking, cards, payments abroad, and whether staff speak English."],
+  "Book an appointment or apply online": ["s_book", ""],
+  "Sign the account agreement and the signature card": ["s_sign", "Karton deponovanih potpisa."],
+  "Set up e-banking and the business card": ["s_ebank", ""], "Give the account number to your accountant": ["s_acct", ""],
+  "APR registration extract": ["d_apr", "Izvod iz registra privrednih subjekata. Banks often want a recent one."], "PIB certificate": ["d_pib", "Potvrda o PIB-u."],
+  "Founding act": ["d_osn", "Osnivački akt."], "Director's ID card or passport": ["d_id", ""],
+  "Beneficial owner extract": ["d_ben", "From the Centralna evidencija stvarnih vlasnika."],
+  "Residence permit": ["d_res", "Only if the director or owner is a foreign citizen."], "Company stamp": ["d_stamp", "Only if you use one."]
+};
+
+const LANG_KEY = "bank-checklist-lang";
+let lang = document.documentElement.lang === "sr" ? "sr" : "ru";
+const t = (k, ...a) => { const v = T[lang][k]; return typeof v === "function" ? v(...a) : v };
+const label = x => x.key && STARTER[x.key] ? STARTER[x.key][lang][0] : x.text;
+const noteOf = x => x.key && STARTER[x.key] ? STARTER[x.key][lang][1] || "" : x.note || "";
+
 const LKEY = "bank-checklist-v1";
 const uid = () => Math.random().toString(36).slice(2, 10);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
-/* Starting list for a new checklist: typical steps and documents for a business account in Serbia. Everything can be edited or deleted. */
 function starter() {
-  const step = ([text, note = ""]) => ({ id: uid(), text, note, done: false });
   return {
-    general: [
-      ["Register the company with APR", "Agencija za privredne registre. You get the registration decision (rešenje o registraciji)."],
-      ["Note the PIB and matični broj", "Tax ID and registration number, both issued at registration."],
-      ["Decide who will sign for the account", "Usually the director. Anyone else needs to be authorised."],
-      ["Decide whether to use a company stamp", "Optional. Some banks still ask whether you use one."],
-      ["Compare the banks", "Monthly fees, e-banking, cards, payments abroad, and whether staff speak English."],
-      ["Book an appointment or apply online"],
-      ["Sign the account agreement and the signature card", "Karton deponovanih potpisa."],
-      ["Set up e-banking and the business card"],
-      ["Give the account number to your accountant"]
-    ].map(step),
-    docs: [
-      ["APR registration extract", "Izvod iz registra privrednih subjekata. Banks often want a recent one."],
-      ["PIB certificate", "Potvrda o PIB-u."],
-      ["Founding act", "Osnivački akt."],
-      ["Director's ID card or passport"],
-      ["Beneficial owner extract", "From the Centralna evidencija stvarnih vlasnika."],
-      ["Residence permit", "Only if the director or owner is a foreign citizen."],
-      ["Company stamp", "Only if you use one."]
-    ].map(([name, note = ""]) => ({ id: uid(), name, note, ready: false })),
+    v: 2,
+    general: GENERAL_KEYS.map(key => ({ id: uid(), key, done: false })),
+    docs: DOC_KEYS.map(key => ({ id: uid(), key, ready: false })),
     banks: []
   };
 }
@@ -255,14 +361,28 @@ const ui = { tab: "steps", sheet: null, armed: null, focus: null, pickOpen: fals
 /* ---------- storage ---------- */
 function normalise(d) {
   d = d && typeof d === "object" ? d : {};
-  return { general: Array.isArray(d.general) ? d.general : [], docs: Array.isArray(d.docs) ? d.docs : [], banks: Array.isArray(d.banks) ? d.banks : [] };
+  const out = { v: 2, general: Array.isArray(d.general) ? d.general : [], docs: Array.isArray(d.docs) ? d.docs : [], banks: Array.isArray(d.banks) ? d.banks : [] };
+  if (d.v !== 2) {
+    /* Version 1: docs used "name", and starter items were English text. Untouched starter items become translatable;
+       the company-registration steps are dropped unless they were ticked or given a note. */
+    const fix = (x, txt) => {
+      const note = x.note || "", old = OLD_EN[txt], k = old?.[0]; delete x.name;
+      if (!old || note !== old[1]) return { ...x, text: txt, note };
+      if (k === null) return x.done ? { ...x, text: txt, note } : null;
+      const y = { id: x.id, key: k }; if ("done" in x) y.done = x.done; if ("ready" in x) y.ready = x.ready; return y;
+    };
+    out.general = out.general.map(x => fix({ ...x }, x.text)).filter(Boolean);
+    out.docs = out.docs.map(x => fix({ ...x }, x.name ?? x.text)).filter(Boolean);
+  }
+  out.banks.forEach(b => { b.docIds ||= []; b.steps ||= []; b.status ||= "considering"; b.note ||= "" });
+  return out;
 }
 function loadLocal() {
   let raw = null;
   try { raw = localStorage.getItem(LKEY) } catch (e) {}
   try { S = raw ? normalise(JSON.parse(raw)) : starter() } catch (e) { S = starter() }
-  if (!raw) persist();
-  setStatus("Your checklist is saved in this browser on this device.");
+  persist();
+  setStatus("stLocal");
   render();
 }
 let chain = Promise.resolve();
@@ -270,16 +390,16 @@ function persist() {
   const json = JSON.stringify(S);
   try { localStorage.setItem(LKEY, json) } catch (e) {}
   if (mode !== "db") return;
-  chain = chain.then(() => db.doc("checklist/main").set(JSON.parse(json)))
-    .catch(() => toast("Couldn't save that change. Check your connection and try again."));
+  chain = chain.then(() => db.doc("checklist/main").set(JSON.parse(json))).catch(() => toast(t("saveFail")));
 }
 function save() { persist(); render() }
-function setStatus(t) { document.getElementById("status").textContent = t }
+let statusKey = "";
+function setStatus(k) { statusKey = k; document.getElementById("status").textContent = k ? t(k) : "" }
 function toast(msg) {
-  const t = document.getElementById("toast"), nav = document.querySelector(".bottom-nav");
-  /* On phones the toast sits just above the bottom tab bar instead of covering it. */
-  t.style.bottom = nav && getComputedStyle(nav).display !== "none" ? nav.getBoundingClientRect().height + 12 + "px" : "";
-  t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, 3000 + msg.length * 20);
+  const el = document.getElementById("toast"), nav = document.querySelector(".bottom-nav");
+  /* On phones the toast sits just above the floating tab bar instead of covering it. */
+  el.style.bottom = nav && getComputedStyle(nav).display !== "none" ? innerHeight - nav.getBoundingClientRect().top + 10 + "px" : "";
+  el.textContent = msg; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, 3000 + msg.length * 20);
 }
 
 /* ---------- lookups ---------- */
@@ -293,130 +413,139 @@ const banksNeeding = d => S.banks.filter(b => b.docIds.includes(d.id));
 
 /* ---------- views ---------- */
 function stepRow(x, kind, bankId = "") {
+  const n = noteOf(x);
   return `<li><label class="step"><input type="checkbox" data-act="toggle" data-kind="${kind}" data-id="${x.id}" data-bank="${bankId}" ${x.done ? "checked" : ""}>
-    <span class="txt"><span class="nm">${esc(x.text)}</span>${x.note ? `<span class="sub">${esc(x.note)}</span>` : ""}</span></label>
-    <button class="edit-btn" data-act="edit" data-kind="${kind}" data-id="${x.id}" data-bank="${bankId}" aria-label="Edit ${esc(x.text)}">Edit</button></li>`;
+    <span class="txt"><span class="nm">${esc(label(x))}</span>${n ? `<span class="sub">${esc(n)}</span>` : ""}</span></label>
+    <button class="edit-btn" data-act="edit" data-kind="${kind}" data-id="${x.id}" data-bank="${bankId}" aria-label="${t("edit")}" title="${t("edit")}">${PENCIL}</button></li>`;
 }
 function docRow(d, bankId = "") {
-  const needed = banksNeeding(d);
-  const chips = bankId ? "" : `<span class="needed">${needed.length ? needed.map(b => `<span class="mini">${esc(b.name)}</span>`).join("") : `<span class="mini">No bank asks for it yet</span>`}</span>`;
-  return `<li class="doc-row"><label class="step"><input type="checkbox" data-act="toggle" data-kind="doc" data-id="${d.id}" ${d.ready ? "checked" : ""}>
-    <span class="txt"><span class="nm">${esc(d.name)}</span>${d.note ? `<span class="sub">${esc(d.note)}</span>` : ""}${chips}</span></label>
-    ${bankId ? `<button class="edit-btn" data-act="unlink-doc" data-id="${d.id}" data-bank="${bankId}" aria-label="Remove ${esc(d.name)} from this bank">Remove</button>`
-             : `<button class="edit-btn" data-act="edit" data-kind="doc" data-id="${d.id}" aria-label="Edit ${esc(d.name)}">Edit</button>`}</li>`;
+  const needed = banksNeeding(d), n = noteOf(d);
+  const chips = bankId ? "" : `<span class="needed">${needed.length ? needed.map(b => `<span class="pill">${esc(b.name)}</span>`).join("") : `<span class="pill">${t("noBankAsks")}</span>`}</span>`;
+  return `<li><label class="step"><input type="checkbox" data-act="toggle" data-kind="doc" data-id="${d.id}" ${d.ready ? "checked" : ""}>
+    <span class="txt"><span class="nm">${esc(label(d))}</span>${n ? `<span class="sub">${esc(n)}</span>` : ""}${chips}</span></label>
+    ${bankId ? `<button class="edit-btn" data-act="unlink-doc" data-id="${d.id}" data-bank="${bankId}" aria-label="${t("remove")}" title="${t("remove")}">${CROSS}</button>`
+             : `<button class="edit-btn" data-act="edit" data-kind="doc" data-id="${d.id}" aria-label="${t("edit")}" title="${t("edit")}">${PENCIL}</button>`}</li>`;
 }
-function addForm(form, placeholder, label, bankId = "") {
-  return `<form class="add-row" data-form="${form}" data-bank="${bankId}"><input class="input" name="text" placeholder="${esc(placeholder)}" aria-label="${esc(placeholder)}" autocomplete="off" id="add-${form}"><button class="btn primary">${label}</button></form>`;
+function addForm(form, placeholder, btn, bankId = "") {
+  return `<form class="add-row" data-form="${form}" data-bank="${bankId}"><input class="input" name="text" placeholder="${esc(placeholder)}" aria-label="${esc(placeholder)}" autocomplete="off" id="add-${form}"><button class="btn primary">${btn}</button></form>`;
 }
-function prog(label, done, total) {
+function prog(lab, done, total) {
   const pct = total ? Math.round(done / total * 100) : 0;
-  return `<div class="prog"><span class="lab">${label}</span><div class="bar"><span style="width:${pct}%"></span></div><span>${done}/${total}</span></div>`;
+  return `<div class="prog"><span class="lab">${lab}</span><div class="bar"><span style="width:${pct}%"></span></div><span>${done}/${total}</span></div>`;
 }
 
 function viewSteps() {
   const g = S.general, gd = count(g, x => x.done), ready = count(S.docs, d => d.ready);
-  const active = S.banks.filter(b => b.status !== "no");
-  return `<section class="stats">
-      <div class="stat"><span class="eyebrow">General steps</span><b>${gd}<small>/${g.length}</small></b></div>
-      <div class="stat"><span class="eyebrow">Documents ready</span><b>${ready}<small>/${S.docs.length}</small></b></div>
-      <div class="stat"><span class="eyebrow">Banks</span><b>${active.length}</b></div>
+  const all = [...g.map(x => x.done), ...S.docs.map(d => d.ready)], pct = all.length ? Math.round(count(all, Boolean) / all.length * 100) : 0;
+  return `<section class="overview">
+      <div class="ov main"><span class="eyebrow">${t("progress")}</span><b>${pct}<small>%</small></b>
+        <div class="segbar" aria-hidden="true">${all.map(on => `<i class="${on ? "on" : ""}"></i>`).join("")}</div></div>
+      <div class="ov"><span class="eyebrow">${t("genSteps")}</span><b>${gd}<small>/${g.length}</small></b></div>
+      <div class="ov"><span class="eyebrow">${t("docsReady")}</span><b>${ready}<small>/${S.docs.length}</small></b></div>
     </section>
-    <section class="glass panel">
-      <div class="sec-head"><div><span class="eyebrow">Every bank</span><h2>General steps</h2></div>
-        ${g.length && gd === g.length ? `<span class="complete-badge">✓ All done</span>` : ""}</div>
-      <p class="hint">Steps you do once, whichever bank you choose. Each bank's own steps are on the Banks tab.</p>
-      ${g.length ? `<ol class="steps">${g.map(x => stepRow(x, "general")).join("")}</ol>` : `<p class="hint">No general steps yet. Add the first one below.</p>`}
-      ${addForm("general", "Add a general step", "Add")}
+    <section class="card">
+      <div class="sec-head"><div><span class="eyebrow">${t("everyBank")}</span><h2>${t("generalSteps")}</h2></div>
+        ${g.length && gd === g.length ? `<span class="done-badge">✓ ${t("allDone")}</span>` : ""}</div>
+      <p class="hint">${t("generalHint")}</p>
+      ${g.length ? `<ol class="steps">${g.map(x => stepRow(x, "general")).join("")}</ol>` : `<p class="hint">${t("noGeneral")}</p>`}
+      ${addForm("general", t("addGeneral"), t("add"))}
     </section>
-    <section class="glass panel">
-      <div class="sec-head"><div><span class="eyebrow">Backup</span><h3>Keep a copy</h3></div></div>
-      <p class="hint">Your checklist is saved on this device. Save a backup file to keep a copy or move it to a new phone.</p>
-      <div class="btns"><button class="btn small" data-act="backup">Save a backup file</button>
-        <label class="btn small">Restore from a file<input type="file" accept=".json,application/json" data-act="restore" hidden></label></div>
+    <section class="card">
+      <div class="sec-head"><div><span class="eyebrow">${t("backupEyebrow")}</span><h3>${t("backupTitle")}</h3></div></div>
+      <p class="hint">${t("backupHint")}</p>
+      <div class="btns"><button class="btn small" data-act="backup">${t("saveBackup")}</button>
+        <label class="btn small">${t("restore")}<input type="file" accept=".json,application/json" data-act="restore" hidden></label></div>
     </section>`;
 }
 
 function viewBanks() {
   const cards = S.banks.map(b => {
     const docs = bankDocs(b), st = b.status || "considering";
-    const pill = st === "open" ? `<span class="mini ok">${STATUS.open}</span>` : st === "applying" ? `<span class="tag">${STATUS.applying}</span>` : `<span class="mini">${STATUS[st]}</span>`;
-    return `<button class="bank-card${st === "open" ? " is-open" : ""}${st === "no" ? " is-no" : ""}" data-act="open-bank" data-id="${b.id}">
-      <div class="head"><h3>${esc(b.name)}</h3>${pill}</div>
-      ${prog("Documents", count(docs, d => d.ready), docs.length)}
-      ${prog("Bank steps", count(b.steps, x => x.done), b.steps.length)}
+    return `<button class="bank-card st-${st}" data-act="open-bank" data-id="${b.id}">
+      <div class="head"><h3>${esc(b.name)}</h3><span class="pill ${st}">${t("st_" + st)}</span></div>
+      ${prog(t("progDocs"), count(docs, d => d.ready), docs.length)}
+      ${prog(t("progSteps"), count(b.steps, x => x.done), b.steps.length)}
       ${b.note ? `<p class="note">${esc(b.note)}</p>` : ""}
     </button>`;
   }).join("");
-  return `<section class="glass panel">
-    <div class="sec-head"><div><span class="eyebrow">Compare</span><h2>Banks</h2></div></div>
-    <p class="hint">Add each bank you're looking at. Open one to choose the documents it asks for and add steps that only apply there.</p>
-    ${addForm("bank", "Bank name", "Add bank")}
-    ${S.banks.length ? `<div class="bank-grid">${cards}</div>` : `<div class="empty-state"><h3>No banks yet</h3><p class="muted">Type a bank's name above and tap Add bank.</p></div>`}
+  return `<section class="card">
+    <div class="sec-head"><div><span class="eyebrow">${t("compare")}</span><h2>${t("banksTitle")}</h2></div></div>
+    <p class="hint">${t("banksHint")}</p>
+    ${addForm("bank", t("bankName"), t("addBank"))}
+    ${S.banks.length ? `<div class="bank-grid">${cards}</div>` : `<div class="empty-state"><h3>${t("noBanks")}</h3><p class="muted">${t("noBanksHint")}</p></div>`}
   </section>`;
 }
 
 function viewDocs() {
   const ready = count(S.docs, d => d.ready);
-  return `<section class="glass panel">
-    <div class="sec-head"><div><span class="eyebrow">Your papers</span><h2>Documents</h2></div><span class="tag">${ready} of ${S.docs.length} ready</span></div>
-    <p class="hint">Tick a document once you have it. It then counts as ready for every bank that asks for it.</p>
-    ${S.docs.length ? `<ul class="doc-list steps plain">${S.docs.map(d => docRow(d)).join("")}</ul>` : `<p class="hint">No documents yet. Add the first one below.</p>`}
-    ${addForm("doc", "Add a document", "Add")}
+  return `<section class="card">
+    <div class="sec-head"><div><span class="eyebrow">${t("papers")}</span><h2>${t("docsTitle")}</h2></div><span class="pill accent">${t("readyOf", ready, S.docs.length)}</span></div>
+    <p class="hint">${t("docsHint")}</p>
+    ${S.docs.length ? `<ul class="steps plain">${S.docs.map(d => docRow(d)).join("")}</ul>` : `<p class="hint">${t("noDocs")}</p>`}
+    ${addForm("doc", t("addDoc"), t("add"))}
   </section>`;
 }
 
 function sheetBank(b) {
   const docs = bankDocs(b), st = b.status || "considering", gd = count(S.general, x => x.done);
   const other = S.docs.filter(d => !b.docIds.includes(d.id));
-  return `<div class="sheet-head"><div><span class="eyebrow">Bank</span><h2>${esc(b.name)}</h2></div><button class="btn ghost" data-act="close" aria-label="Close">✕</button></div>
+  return `<div class="sheet-head"><div><span class="eyebrow">${t("bank")}</span><h2>${esc(b.name)}</h2></div><button class="btn ghost" data-act="close" aria-label="${t("close")}">✕</button></div>
   <div class="sheet-body">
-    <div class="sec plain">
-      <label class="field">Name<input class="input" data-field="name" data-id="${b.id}" value="${esc(b.name)}" autocomplete="off"></label>
-      <div class="field">Status<div class="rating">${Object.entries(STATUS).map(([k, v]) => `<button data-act="status" data-id="${b.id}" data-status="${k}" aria-pressed="${st === k}">${v}</button>`).join("")}</div></div>
-      <label class="field">Notes<textarea class="input" data-field="note" data-id="${b.id}" placeholder="Fees, branch, contact person, what they told you">${esc(b.note)}</textarea></label>
-    </div>
-    <div class="sec">
-      <div class="sec-head"><h3>Documents they ask for</h3><span class="mini">${count(docs, d => d.ready)} of ${docs.length} ready</span></div>
-      ${docs.length ? `<ul class="doc-list steps plain">${docs.map(d => docRow(d, b.id)).join("")}</ul>` : `<p class="hint">None chosen yet.</p>`}
-      ${other.length ? `<details ${docs.length && !ui.pickOpen ? "" : "open"}><summary>Choose from your documents (${other.length})</summary><div class="picks">${other.map(d =>
-        `<label class="pick"><input type="checkbox" data-act="link-doc" data-id="${d.id}" data-bank="${b.id}"><span>${esc(d.name)}</span></label>`).join("")}</div></details>` : ""}
-      ${addForm("bank-doc", "Add a new document", "Add", b.id)}
-    </div>
-    <div class="sec">
-      <div class="sec-head"><h3>Steps at this bank</h3><span class="mini">${count(b.steps, x => x.done)} of ${b.steps.length} done</span></div>
-      ${b.steps.length ? `<ol class="steps">${b.steps.map(x => stepRow(x, "bstep", b.id)).join("")}</ol>` : `<p class="hint">Add anything only this bank needs, for example a meeting or a form to fill in.</p>`}
-      ${addForm("bstep", "Add a step for this bank", "Add", b.id)}
-    </div>
-    <p class="hint">Plus the general steps for every bank: ${gd} of ${S.general.length} done.</p>
-    <div class="btns"><button class="btn danger${ui.armed === b.id ? " armed" : ""}" data-act="delete-bank" data-id="${b.id}">${ui.armed === b.id ? "Tap again to delete this bank" : "Delete bank"}</button></div>
+    <section class="card">
+      <label class="field">${t("name")}<input class="input" data-field="name" data-id="${b.id}" value="${esc(b.name)}" autocomplete="off"></label>
+      <div class="field">${t("status")}<div class="choice">${["considering", "applying", "open", "no"].map(k => `<button data-act="status" data-id="${b.id}" data-status="${k}" aria-pressed="${st === k}">${t("st_" + k)}</button>`).join("")}</div></div>
+      <label class="field">${t("notes")}<textarea class="input" data-field="note" data-id="${b.id}" placeholder="${esc(t("bankNotesPh"))}">${esc(b.note)}</textarea></label>
+    </section>
+    <section class="card">
+      <div class="sec-head"><h3>${t("docsAsked")}</h3><span class="pill">${t("readyOf", count(docs, d => d.ready), docs.length)}</span></div>
+      ${docs.length ? `<ul class="steps plain">${docs.map(d => docRow(d, b.id)).join("")}</ul>` : `<p class="hint">${t("noneChosen")}</p>`}
+      ${other.length ? `<details ${docs.length && !ui.pickOpen ? "" : "open"}><summary>${t("chooseDocs", other.length)}</summary><div class="picks">${other.map(d =>
+        `<label class="pick"><input type="checkbox" data-act="link-doc" data-id="${d.id}" data-bank="${b.id}"><span>${esc(label(d))}</span></label>`).join("")}</div></details>` : ""}
+      ${addForm("bank-doc", t("addNewDoc"), t("add"), b.id)}
+    </section>
+    <section class="card">
+      <div class="sec-head"><h3>${t("stepsHere")}</h3><span class="pill">${t("doneOf", count(b.steps, x => x.done), b.steps.length)}</span></div>
+      ${b.steps.length ? `<ol class="steps">${b.steps.map(x => stepRow(x, "bstep", b.id)).join("")}</ol>` : `<p class="hint">${t("bankStepsHint")}</p>`}
+      ${addForm("bstep", t("addBankStep"), t("add"), b.id)}
+    </section>
+    <p class="hint">${t("plusGeneral", gd, S.general.length)}</p>
+    <div class="btns"><button class="btn danger${ui.armed === b.id ? " armed" : ""}" data-act="delete-bank" data-id="${b.id}">${ui.armed === b.id ? t("confirmDeleteBank") : t("deleteBank")}</button></div>
   </div>`;
 }
 
 function sheetItem({ kind, id, bank }) {
   const x = itemOf(kind, id, bank); if (!x) return "";
   const list = listFor(kind, bank), i = list.indexOf(x), isDoc = kind === "doc";
-  const title = isDoc ? "Edit document" : "Edit step", where = isDoc ? "Document" : kind === "general" ? "General step" : esc(bankOf(bank)?.name);
-  return `<div class="sheet-head"><div><span class="eyebrow">${where}</span><h2>${title}</h2></div><button class="btn ghost" data-act="close" aria-label="Close">✕</button></div>
-  <form class="sheet-body" data-form="edit-item">
-    <label class="field">${isDoc ? "Document" : "Step"}<input class="input" name="text" value="${esc(isDoc ? x.name : x.text)}" required autocomplete="off"></label>
-    <label class="field">Notes<textarea class="input" name="note" placeholder="${isDoc ? "Where to get it, how recent it must be" : "Details, links, who to call"}">${esc(x.note)}</textarea></label>
-    ${isDoc && S.banks.length ? `<div class="field">Asked for by<div class="picks">${S.banks.map(b =>
+  const where = isDoc ? t("document") : kind === "general" ? t("generalStep") : esc(bankOf(bank)?.name);
+  return `<div class="sheet-head"><div><span class="eyebrow">${where}</span><h2>${isDoc ? t("editDoc") : t("editStep")}</h2></div><button class="btn ghost" data-act="close" aria-label="${t("close")}">✕</button></div>
+  <form class="sheet-body" data-form="edit-item"><section class="card">
+    <label class="field">${isDoc ? t("document") : t("step")}<input class="input" name="text" value="${esc(label(x))}" required autocomplete="off"></label>
+    <label class="field">${t("notes")}<textarea class="input" name="note" placeholder="${esc(isDoc ? t("docNotesPh") : t("stepNotesPh"))}">${esc(noteOf(x))}</textarea></label>
+    ${isDoc && S.banks.length ? `<div class="field">${t("askedBy")}<div class="picks">${S.banks.map(b =>
       `<label class="pick"><input type="checkbox" name="bank" value="${b.id}" ${b.docIds.includes(x.id) ? "checked" : ""}><span>${esc(b.name)}</span></label>`).join("")}</div></div>` : ""}
-    <div class="btns"><button type="button" class="btn small" data-act="move" data-dir="-1" ${i === 0 ? "disabled" : ""}>Move up</button>
-      <button type="button" class="btn small" data-act="move" data-dir="1" ${i === list.length - 1 ? "disabled" : ""}>Move down</button></div>
-    <div class="btns"><button class="btn primary">Save</button><button type="button" class="btn ghost" data-act="close">Cancel</button>
-      <button type="button" class="btn danger${ui.armed === id ? " armed" : ""}" data-act="delete-item" style="margin-left:auto">${ui.armed === id ? "Tap again to delete" : "Delete"}</button></div>
+    <div class="btns"><button type="button" class="btn small" data-act="move" data-dir="-1" ${i === 0 ? "disabled" : ""}>↑ ${t("moveUp")}</button>
+      <button type="button" class="btn small" data-act="move" data-dir="1" ${i === list.length - 1 ? "disabled" : ""}>↓ ${t("moveDown")}</button></div>
+  </section>
+    <div class="btns"><button class="btn primary">${t("save")}</button><button type="button" class="btn ghost" data-act="close">${t("cancel")}</button>
+      <button type="button" class="btn danger${ui.armed === id ? " armed" : ""}" data-act="delete-item" style="margin-left:auto">${ui.armed === id ? t("confirmDelete") : t("del")}</button></div>
   </form>`;
 }
 
-function render() {
+function renderChrome() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach(el => el.innerHTML = t(el.dataset.t));
+  document.querySelectorAll("[data-t-label]").forEach(el => { el.setAttribute("aria-label", t(el.dataset.tLabel)); if (el.tagName === "BUTTON") el.title = t(el.dataset.tLabel) });
+  document.querySelectorAll("[data-act=lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
   document.querySelectorAll("[data-act=tab]").forEach(b => {
     const on = b.dataset.tab === ui.tab;
     if (b.getAttribute("role") === "tab") b.setAttribute("aria-selected", on);
     else if (on) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
   });
-  const main = document.getElementById("main");
-  main.innerHTML = !S ? "" : ui.tab === "banks" ? viewBanks() : ui.tab === "docs" ? viewDocs() : viewSteps();
+  if (statusKey) setStatus(statusKey);
+}
+function render() {
+  renderChrome();
+  document.getElementById("main").innerHTML = !S ? "" : ui.tab === "banks" ? viewBanks() : ui.tab === "docs" ? viewDocs() : viewSteps();
   renderSheet();
   if (ui.focus) { document.getElementById(ui.focus)?.focus(); ui.focus = null }
 }
@@ -441,15 +570,16 @@ document.addEventListener("click", e => {
   const { act, id } = el.dataset;
   if (act !== "delete-bank" && act !== "delete-item") ui.armed = null;
   if (act === "tab") { ui.tab = el.dataset.tab; ui.sheet = null; render(); scrollTo({ top: 0 }) }
+  else if (act === "lang") { lang = el.dataset.lang; try { localStorage.setItem(LANG_KEY, lang) } catch (e) {} render() }
   else if (act === "theme") setTheme(el.dataset.theme);
   else if (act === "close") closeSheet();
   else if (act === "open-bank") openSheet({ type: "bank", id });
   else if (act === "edit") openSheet({ type: "item", kind: el.dataset.kind, id, bank: el.dataset.bank, back: ui.sheet?.type === "bank" ? ui.sheet : null });
   else if (act === "status") { bankOf(id).status = el.dataset.status; save() }
-  else if (act === "unlink-doc") { const b = bankOf(el.dataset.bank); b.docIds = b.docIds.filter(x => x !== id); save(); toast(`Removed ${docOf(id)?.name} from ${b.name}. It's still in your documents.`) }
+  else if (act === "unlink-doc") { const b = bankOf(el.dataset.bank); b.docIds = b.docIds.filter(x => x !== id); save(); toast(t("removedDoc", label(docOf(id) || {}), b.name)) }
   else if (act === "delete-bank") {
     if (ui.armed !== id) { ui.armed = id; renderSheet(); return }
-    const b = bankOf(id); S.banks = S.banks.filter(x => x.id !== id); ui.armed = null; ui.sheet = null; save(); toast(`Deleted ${b.name}.`);
+    const b = bankOf(id); S.banks = S.banks.filter(x => x.id !== id); ui.armed = null; ui.sheet = null; save(); toast(t("deleted", b.name));
   }
   else if (act === "move") {
     const s = ui.sheet, list = listFor(s.kind, s.bank), i = list.findIndex(x => x.id === s.id), j = i + Number(el.dataset.dir);
@@ -462,7 +592,7 @@ document.addEventListener("click", e => {
     const list = listFor(s.kind, s.bank), x = itemOf(s.kind, s.id, s.bank);
     list.splice(list.indexOf(x), 1);
     if (s.kind === "doc") S.banks.forEach(b => b.docIds = b.docIds.filter(d => d !== s.id));
-    ui.armed = null; ui.sheet = s.back || null; save(); toast(`Deleted ${x.name || x.text}.`);
+    ui.armed = null; ui.sheet = s.back || null; save(); toast(t("deleted", label(x)));
   }
   else if (act === "backup") backup();
 });
@@ -477,7 +607,7 @@ document.addEventListener("change", e => {
   } else if (act === "restore") restore(el.files[0]);
   else if (el.dataset.field) {
     const b = bankOf(id), v = el.value.trim();
-    if (el.dataset.field === "name") { if (!v) { el.value = b.name; toast("A bank needs a name."); return } b.name = v } else b.note = v;
+    if (el.dataset.field === "name") { if (!v) { el.value = b.name; toast(t("needName")); return } b.name = v } else b.note = v;
     /* Don't redraw the sheet here: this fires on blur, and redrawing would swallow the tap that caused it. */
     persist(); document.getElementById("main").innerHTML = viewBanks();
     const h = document.querySelector(".sheet-head h2"); if (h) h.textContent = b.name;
@@ -487,28 +617,28 @@ document.addEventListener("submit", e => {
   const f = e.target, form = f.dataset.form; if (!form) return;
   e.preventDefault();
   if (form === "edit-item") {
-    const s = ui.sheet, x = itemOf(s.kind, s.id, s.bank), text = f.text.value.trim(); if (!x || !text) return;
+    const s = ui.sheet, x = itemOf(s.kind, s.id, s.bank), text = f.text.value.trim(), note = f.note.value.trim(); if (!x || !text) return;
+    /* A starter item stays translatable until its words are changed. */
+    if (!(x.key && text === label(x) && note === noteOf(x))) { delete x.key; x.text = text; x.note = note }
     if (s.kind === "doc") {
-      x.name = text;
       const on = new Set([...f.querySelectorAll("[name=bank]:checked")].map(i => i.value));
       S.banks.forEach(b => { const has = b.docIds.includes(x.id); if (on.has(b.id) && !has) b.docIds.push(x.id); if (!on.has(b.id) && has) b.docIds = b.docIds.filter(d => d !== x.id) });
-    } else x.text = text;
-    x.note = f.note.value.trim();
-    ui.sheet = s.back || null; save(); toast("Saved.");
+    }
+    ui.sheet = s.back || null; save(); toast(t("saved"));
     return;
   }
   const text = f.text.value.trim(); if (!text) return;
   const bank = bankOf(f.dataset.bank);
   if (form === "general") S.general.push({ id: uid(), text, note: "", done: false });
-  else if (form === "doc") S.docs.push({ id: uid(), name: text, note: "", ready: false });
+  else if (form === "doc") S.docs.push({ id: uid(), text, note: "", ready: false });
   else if (form === "bstep") bank.steps.push({ id: uid(), text, note: "", done: false });
   else if (form === "bank-doc") {
-    const d = S.docs.find(d => d.name.toLowerCase() === text.toLowerCase()) || (S.docs.push({ id: uid(), name: text, note: "", ready: false }), S.docs.at(-1));
+    const d = S.docs.find(d => label(d).toLowerCase() === text.toLowerCase()) || (S.docs.push({ id: uid(), text, note: "", ready: false }), S.docs.at(-1));
     if (!bank.docIds.includes(d.id)) bank.docIds.push(d.id);
   } else if (form === "bank") {
-    if (S.banks.some(b => b.name.toLowerCase() === text.toLowerCase())) { toast(`${text} is already on your list.`); return }
+    if (S.banks.some(b => b.name.toLowerCase() === text.toLowerCase())) { toast(t("dupBank", text)); return }
     S.banks.push({ id: uid(), name: text, status: "considering", note: "", docIds: [], steps: [] });
-    toast(`Added ${text}. Tap it to choose the documents it asks for.`);
+    toast(t("addedBank", text));
   }
   ui.focus = "add-" + form; save();
 });
@@ -519,34 +649,34 @@ async function backup() {
   /* Inside claude.ai a page can't download directly; the viewer confirms the save instead. */
   let dl = null; try { dl = window.claude?.use ? await window.claude.use("downloads") : null } catch (e) {}
   if (dl) {
-    try { await dl.save({ filename, data: blob }); toast("Backup saved.") }
-    catch (e) { if (e?.code !== "declined") toast("Couldn't save the backup here. Try again in a moment.") }
+    try { await dl.save({ filename, data: blob }); toast(t("backupSaved")) }
+    catch (e) { if (e?.code !== "declined") toast(t("backupFail")) }
     return;
   }
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename;
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  toast("Backup saved to your downloads.");
+  toast(t("backupSaved"));
 }
 function restore(file) {
   if (!file) return;
-  file.text().then(t => {
-    const j = JSON.parse(t), d = j?.app === "bank-checklist" ? j.data : null;
+  file.text().then(txt => {
+    const j = JSON.parse(txt), d = j?.app === "bank-checklist" ? j.data : null;
     if (!d) throw 0;
-    S = normalise(d); ui.sheet = null; save(); toast("Restored your checklist from the backup file.");
-  }).catch(() => toast("That file isn't a Bank Checklist backup. Choose a file saved with Save a backup file."));
+    S = normalise(d); ui.sheet = null; save(); toast(t("restored"));
+  }).catch(() => toast(t("badFile")));
 }
 
 /* Colour scheme: auto follows the device; light or dark is saved under "nurnhe-theme",
    one key shared with the other apps on nurnhe.github.io so switching in one switches them all. */
 const THEME_KEY = "nurnhe-theme";
-function themePref() { try { const t = localStorage.getItem(THEME_KEY); return t === "light" || t === "dark" ? t : "auto" } catch (e) { return "auto" } }
-function applyTheme(t) {
-  if (t === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
-  document.querySelectorAll("[data-act=theme]").forEach(b => b.setAttribute("aria-pressed", b.dataset.theme === t));
-  const dark = t === "dark" || t === "auto" && matchMedia("(prefers-color-scheme: dark)").matches;
-  document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.content = dark ? "#17111C" : "#FBF4F7"; m.removeAttribute("media") });
+function themePref() { try { const v = localStorage.getItem(THEME_KEY); return v === "light" || v === "dark" ? v : "auto" } catch (e) { return "auto" } }
+function applyTheme(v) {
+  if (v === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = v;
+  document.querySelectorAll("[data-act=theme]").forEach(b => b.setAttribute("aria-pressed", b.dataset.theme === v));
+  const dark = v === "dark" || v === "auto" && matchMedia("(prefers-color-scheme: dark)").matches;
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.content = dark ? "#0E1217" : "#F3F0E8"; m.removeAttribute("media") });
 }
-function setTheme(t) { try { localStorage.setItem(THEME_KEY, t) } catch (e) {} applyTheme(t) }
+function setTheme(v) { try { localStorage.setItem(THEME_KEY, v) } catch (e) {} applyTheme(v) }
 addEventListener("storage", e => { if (e.key === THEME_KEY) applyTheme(themePref()) });
 applyTheme(themePref());
 matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => applyTheme(themePref()));
@@ -559,14 +689,15 @@ render();
   try { db = window.claude?.use ? await window.claude.use("db") : null } catch (e) { db = null }
   if (!db) { loadLocal(); return }
   mode = "db";
-  const slow = setTimeout(() => { if (!S) setStatus("Still loading your saved checklist. Check your connection, then reload the page.") }, 10000);
+  const slow = setTimeout(() => { if (!S) setStatus("stSlow") }, 10000);
   db.doc("checklist/main").onSnapshot(s => {
     clearTimeout(slow);
     if (!s.exists) { S = starter(); persist(); render(); return }
-    const d = s.data(), json = JSON.stringify(normalise(d));
-    if (S && json === JSON.stringify(S)) return;
-    S = normalise(d); render();
-  }, () => { clearTimeout(slow); setStatus("Lost the connection to your saved checklist. Reload the page to reconnect.") });
-  setStatus("Your checklist is saved to your account and syncs across devices.");
+    const d = s.data(), next = normalise(d);
+    if (S && JSON.stringify(next) === JSON.stringify(S)) return;
+    S = next; render();
+    if (d.v !== 2) persist();
+  }, () => { clearTimeout(slow); setStatus("stLost") });
+  setStatus("stDb");
 })();
 </script>

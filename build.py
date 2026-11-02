@@ -4,13 +4,13 @@ import pathlib
 root = pathlib.Path(__file__).parent
 body = (root / "bank-checklist.html").read_text()
 head = """<!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Bank Checklist</title>
-<meta name="theme-color" content="#FBF4F7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#17111C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F0E8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1217" media="(prefers-color-scheme: dark)">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bank Checklist">
