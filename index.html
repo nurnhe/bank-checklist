@@ -530,9 +530,17 @@ document.addEventListener("submit", e => {
   ui.focus = "add-" + form; save();
 });
 
-function backup() {
+async function backup() {
   const blob = new Blob([JSON.stringify({ app: "bank-checklist", saved: new Date().toISOString(), data: S }, null, 2)], { type: "application/json" });
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `bank-checklist-${new Date().toISOString().slice(0, 10)}.json`;
+  const filename = `bank-checklist-${new Date().toISOString().slice(0, 10)}.json`;
+  /* Inside claude.ai a page can't download directly; the viewer confirms the save instead. */
+  let dl = null; try { dl = window.claude?.use ? await window.claude.use("downloads") : null } catch (e) {}
+  if (dl) {
+    try { await dl.save({ filename, data: blob }); toast("Backup saved.") }
+    catch (e) { if (e?.code !== "declined") toast("Couldn't save the backup here. Try again in a moment.") }
+    return;
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename;
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   toast("Backup saved to your downloads.");
 }
