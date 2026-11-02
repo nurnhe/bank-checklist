@@ -13,10 +13,9 @@ A small checklist for opening a business bank account: general steps you do once
 ## Features
 
 - **Russian and Serbian:** everything, including the starting list, switches between Russian and Serbian (Latin) with the RU / SR buttons. The choice is saved on the device. Steps and documents you type or edit stay as you wrote them.
-- **One page (Чек-лист / Lista):** general steps for every bank at the top, then one collapsible section per bank. Tick, add, edit, reorder or delete any step. A bank's section has its status (Considering, Applying, Account open, Not for me), the documents it asks for (pick from your list or add new), its own steps, notes, and its name and Delete under a fold. The closed header shows the status and document and step counts.
-- **Documents:** one shared list of your papers. Tick a document once you have it and it counts as ready for every bank that asks for it. Each document shows which banks need it.
-- **Starting list:** no general steps (you write your own). Seven typical documents for a Serbian business account (APR extract, PIB, founding act, director's ID, beneficial owners, residence permit, stamp), all editable. No banks until you add them.
-- **Backup:** save a backup file or restore from one at the bottom of the Documents tab.
+- **One page, no tabs:** a "For every bank" card at the top with general steps and general documents, then one collapsible section per bank. Each bank has its status (Considering, Applying, Account open, Not for me), its own documents, its own steps, notes, and its name and Delete under a fold. The closed header shows the status and document and step counts. Tick, add, edit, reorder or delete anything.
+- **Starting list:** no general steps (you write your own). Seven typical general documents for a Serbian business account (APR extract, PIB, founding act, director's ID, beneficial owners, residence permit, stamp), all editable. No banks until you add them.
+- **Backup:** save a backup file or restore from one at the bottom of the page.
 - **Colour scheme:** Auto, Light or Dark, saved under `nurnhe-theme`, the setting shared with the other apps on nurnhe.github.io.
 - **Look:** its own "ledger" design: warm paper with a dot grid, white cards, cobalt for actions, green for done. Fonts are Unbounded and Onest, which cover Cyrillic and Latin.
 
